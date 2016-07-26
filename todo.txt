@@ -1,0 +1,13 @@
+# CIESIN INTERN
+
+## Sentinel Download Bash Script
+1. Read through Sentinel API doc first
+2. HPC? From right now I could only see submit job for high performance computation, may not be so useful for downloading files
+
+### 160726
+1.
+
+
+
+
+
