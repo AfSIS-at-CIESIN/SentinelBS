@@ -4,10 +4,25 @@
 1. Read through Sentinel API doc first
 2. HPC? From right now I could only see submit job for high performance computation, may not be so useful for downloading files
 
+Demand:
+	1. specific resolution lvl in IW
+	2. satelliate desc asc specified
+	3. timeout prevention
+	4. regular param as in 160726
+
 ### 160726
-1.
+Questions:
+	1. Sensing & ingestion period, the differences?
+	1.A. yes. Use sensing. Ingestion means upload time
+	2. Resolution high in comparison with 10m, 25m ... so what's the transformation?
 
-
-
+1. interface:
+	1.1. config: product type, polarisation, sensor mode 
+	1.2. param: longitude & latitude (rectangle region, 2 pts), duration (datetime format, start - end) 
+	1.3. via restful api
+2. in that case, example operation would be:
+	dsen long1 lat1 long2 lat2 start end
+	dsen -t grd -l hw -m iw long1 lat1 long2 lat2 start end
+3. desc asc are keywords in search query by default
 
 
