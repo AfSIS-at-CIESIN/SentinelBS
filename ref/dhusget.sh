@@ -34,12 +34,16 @@ export VERSION=0.3.4
 WD=$HOME/dhusget_tmp
 PIDFILE=$WD/pid
 
+# check the existence of $WD
+# test -- shell tool for checking files
 test -d $WD || mkdir -p $WD 
 
 #-
 
 bold=$(tput bold)
 normal=$(tput sgr0)
+# rev: reverse each line of a file
+# cut: remove sections from each line of a file
 print_script=`echo "$0" | rev | cut -d'/' -f1 | rev`
 
 function print_usage 
@@ -195,6 +199,7 @@ export SENSING_TIME_TO="NOW"
 unset TIMEFILE
 
 
+# getopts used for parse params after opt flags
 while getopts ":d:u:p:l:P:q:C:m:i:t:s:e:S:E:f:c:T:o:V:h:F:R:D:r:O:N:L:n:" opt; do
  case $opt in
 	d)
@@ -324,6 +329,7 @@ echo "Type '$print_script -help' for usage information"
 echo ""
 echo "================================================================================================================" 
 ISSELECTEDEXIT=false;
+# trap: do sth upon user interruption
 trap ISSELECTEDEXIT=true INT;
 
 if [ -z $lock_file ];then
@@ -332,6 +338,7 @@ fi
 
 mkdir $lock_file
 
+# $? return status of immediate previous command, 0 = successfully executed
 if [ ! $? == 0 ]; then 
 	echo -e "Error! An instance of \"dhusget\" retriever is running !\n Pid is: "`cat ${PIDFILE}` "if it isn't running delete the lockdir  ${lock_file}"
 	
@@ -381,12 +388,14 @@ echo ""
 fi
 
 if [ -z $USERNAME ];then
+	# read w/o EOL into VAL
         read -p "Enter username: " VAL
         printf "\n"
         export USERNAME=${VAL}
 fi
 
 if [ -z $PASSWORD ];then
+	# -s safe read flag, no pwd seen
 	read -s -p "Enter password: " VAL
         printf "\n\n"
 	export PASSWORD=${VAL}
@@ -412,6 +421,8 @@ if [ ! -z $check_retry ] && [ -s $FAILED_retry ]; then
 if [ -f .failed.control.now.txt ]; then
     rm .failed.control.now.txt
 fi
+# sh: exec command from inputs, -c := read from string
+# xargs: -P max thread n allowed; -n output at most n args at one line, for output formatting
 cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
         echo "Downloading product ${3} from link ${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value"; 
         ${WC} ${AUTH} ${TRIES} --progress=dot -e dotbytes=10M -c --output-file=./logs/log.${3}.log -O $output_folder/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
@@ -793,6 +804,7 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 	if [ $test -eq 0 ]; then
 		echo "Product ${3} successfully downloaded at " `tail -2 ./logs/log.${3}.log | head -1 | awk -F"(" '\''{print $2}'\'' | awk -F")" '\''{print $1}'\''`;
 		remoteMD5=$( ${WC} -qO- ${AUTH} ${TRIES} -c "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/Checksum/Value/$value" | awk -F">" '\''{print $3}'\'' | awk -F"<" '\''{print $1}'\'');
+		# openssl: crytograph toolkit
 		localMD5=$( openssl md5 $output_folder/${3}".zip" | awk '\''{print $2}'\'');
 		localMD5Uppercase=$(echo "$localMD5" | tr '\''[:lower:]'\'' '\''[:upper:]'\'');
 		#localMD5Uppercase=1;

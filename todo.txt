@@ -10,6 +10,15 @@ Demand:
 	3. timeout prevention
 	4. regular param as in 160726
 
+### 160727
+1. Read through bash example, write comments
+	1. Global vars are EXPORT-ed
+	2. Abundant sanity check
+	3. Check use file & repo instead of vars
+	4. Main exec done with xargs for parallel, sh -c "balabala" for clearer block view
+2. Read through API doc
+3. Refer to ABS
+
 ### 160726
 Questions:
 	1. Sensing & ingestion period, the differences?
