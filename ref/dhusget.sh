@@ -200,6 +200,7 @@ unset TIMEFILE
 
 
 # getopts used for parse params after opt flags
+# OPTARG: default arg var after -x flag
 while getopts ":d:u:p:l:P:q:C:m:i:t:s:e:S:E:f:c:T:o:V:h:F:R:D:r:O:N:L:n:" opt; do
  case $opt in
 	d)
@@ -411,6 +412,7 @@ fi
 
 mkdir -p './logs/'
 
+####
 if [ ! -z $check_retry ] && [ -s $FAILED_retry ]; then
 	 cp $FAILED_retry .failed.control.retry.now.txt
    	 export INPUT_FILE=.failed.control.retry.now.txt
@@ -418,6 +420,7 @@ if [ ! -z $check_retry ] && [ -s $FAILED_retry ]; then
 
 	mkdir -p $output_folder
 
+# clear previous file
 if [ -f .failed.control.now.txt ]; then
     rm .failed.control.now.txt
 fi
@@ -451,6 +454,7 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 done '
 rm .failed.control.retry.now.txt
 fi
+####
 
 #----- Options value check
 echo "================================================================================================================"

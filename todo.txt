@@ -10,6 +10,11 @@ Demand:
 	3. timeout prevention
 	4. regular param as in 160726
 
+## TODO
+1. Fetch input queries
+2. resolution opt
+3. stream xml => files
+
 ### 160727
 1. Read through bash example, write comments
 	1. Global vars are EXPORT-ed
@@ -17,7 +22,19 @@ Demand:
 	3. Check use file & repo instead of vars
 	4. Main exec done with xargs for parallel, sh -c "balabala" for clearer block view
 2. Read through API doc
-3. Refer to ABS
+	Useful Ref https://scihub.copernicus.eu/userguide/3FullTextSearch "Search Keywords"
+	*. base url: https://scihub.copernicus.eu/dhus/search?q=
+	*. platformname: Sentinel-1
+	*. productType: GRD
+	*. beginPosition:[BEG TO END] 
+	*. polarisationmode: VV, HH, ... (default all)
+	*. footprint:"intersects(POLYGON((P1Lon P1Lat, P2Lon P2Lat)))"
+	*. orbitdirection:Ascending / Descending
+	*. sensoroperationlmode:IW
+	Connection via " AND ", whitespace acceptable
+	Return a RSS Feed. Extendable to livestream in Python
+3. Refer to ABS (not done)
+4. Feed streaming complete
 
 ### 160726
 Questions:
