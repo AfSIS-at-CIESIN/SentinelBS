@@ -13,7 +13,10 @@ Demand:
 ## TODO
 1. Fetch input queries
 2. resolution opt
-3. stream xml => files
+
+### 160728
+1. Init downloader
+2. Special credit to dhusget
 
 ### 160727
 1. Read through bash example, write comments
