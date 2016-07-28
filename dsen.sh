@@ -1,12 +1,30 @@
 echo "Dsen: Downloader for Sentinels Scientific Data Hub"
-echo "====================================================="
-echo "Inital Configuration"
-echo ""
+
+# PARSE NON-INTERACTIVE FLAGS
+export INTERACTIVE=true
 
 export USR=""
 export PWD=""
-export OUTDIR="output"
-export ZIP="zip"
+
+#while getopts ":u;p;" opt; do
+#  case $opt in
+#	u)
+#		USR=$OPTARG
+#	;;
+#
+#	p)
+#		PWD=$OPTARG
+#	;;
+#
+#  esac
+#done
+
+
+
+# INTERACTIVE MODE
+echo "====================================================="
+echo "Inital Configuration"
+echo ""
 
 if [[ -z $USR ]]; then
 	read -p "Enter username: " VAL
@@ -20,16 +38,33 @@ if [[ -z $PWD ]]; then
 	printf "\n\n"
 fi
 
+export WC="wget --no-check-certificate"
+export AUTH="--user=${USR} --password=${PWD}"
+
+export ZIP="zip"
+export NAMEFILERESULTS="search_result.xml"
+
+
+#
+export OUTDIR="output"
+
+export THREAD_NUMBER=0
+
+echo "=================================================="
+echo "Download Parameters Configuration (press ENTER if default, value in [])"
+echo ""
+
 read -p "Enter output folder name [output]: " VAL
 if [[ ! -z $VAL ]]; then
 	export OUTDIR="${VAL}"
 fi
 printf "\n"
 
-export WC="wget --no-check-certificate"
-export AUTH="--user=${USR} --password=${PWD}"
-
-export NAMEFILERESULTS="search_result.xml"
+read -p "Enter download thread number [as many as possible]: " VAL
+if [[ ! -z $VAL ]]; then
+	export THREAD_NUMBER=$VAL
+fi
+printf "\n"
 
 mkdir -p $OUTDIR
 cd $OUTDIR
@@ -46,70 +81,67 @@ export MODE="IW"
 export RESOLU=""
 export DIREC=""
 
-export INTERACTIVE=false
+echo "==================================================="
+echo "INPUT PARAMETER (Press ENTER if default, value in [])"
+echo ""
 
-if [[ INTERACTIVE == true ]]; then
-	echo "==================================================="
-	echo "INPUT PARAMETER (Press ENTER if default, value in [])"
-	echo ""
-
-	# What if 2 of them are used
-	read -p "Enter Flatform (Sentinel-1, Sentinel-2) [Sentinel-1]: " VAL
-	if [[ ! -z $VAL ]];then
-		export PLATFORM=$VAL
-	fi
-	printf "\n"
-
-	read -p "Enter Coordinate (P1Lon P1Lat, P2Lon P2Lat, …, PnLon PnLat, P1Lon P1Lat) [all]: " VAL
-	if [[ ! -z $VAL ]];then
-		export LOC="(${VAL})"
-		echo $LOC
-	fi
-	printf "\n"
-
-	read -p "Enter Start Date (yyyy-mm-dd HH:MM:SS) [1 month from now]: " VAL
-	# TODO: not null check
-	if [[ ! -z $VAL ]];then
-		export DATEF=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
-	fi
-	printf "\n"
-
-	read -p "Enter Coordinate (yyyy-mm-dd HH:MM:SS) [now]: " VAL
-	if [[ ! -z $VAL ]];then
-		export DATET=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
-	fi
-	printf "\n"
-
-	read -p "Enter Product (SLC, GRD, OCN, S2MSI1C) [GRD]: " VAL
-	if [[ ! -z $VAL ]];then
-		export PRODUCT=$VAL
-	fi
-	printf "\n"
-
-	read -p "Enter Polarisation (HH, VV, HV, VH, HH HV, VV VH) [all]: " VAL
-	if [[ ! -z $VAL ]];then
-		export POLAR=$VAL
-	fi
-	printf "\n"
-
-	read -p "Enter Sensor Operational Mode (SM, IW, EW) [IW]: " VAL
-	if [[ ! -z $VAL ]];then
-		export MODE=$VAL
-	fi
-	printf "\n"
-
-	read -p "Enter Resolution(Full, High, Medium) [all]: " VAL
-	if [[ ! -z $VAL ]];then
-		export RESOLU=$VAL
-	fi
-	printf "\n"
-
-	read -p "Enter Orbit Direction (Ascending, Descending) [all]): " VAL
-	if [[ ! -z $VAL ]];then
-		export DIREC=$VAL
-	fi
-	printf "\n"
+# What if 2 of them are used
+read -p "Enter Flatform (Sentinel-1, Sentinel-2) [Sentinel-1]: " VAL
+if [[ ! -z $VAL ]];then
+	export PLATFORM=$VAL
 fi
+printf "\n"
+
+read -p "Enter Coordinate (P1Lon P1Lat, P2Lon P2Lat, …, PnLon PnLat, P1Lon P1Lat) [all]: " VAL
+if [[ ! -z $VAL ]];then
+	export LOC="(${VAL})"
+	echo $LOC
+fi
+printf "\n"
+
+read -p "Enter Start Date (yyyy-mm-dd HH:MM:SS) [1 month from now]: " VAL
+# TODO: not null check
+if [[ ! -z $VAL ]];then
+	export DATEF=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
+fi
+printf "\n"
+
+read -p "Enter Coordinate (yyyy-mm-dd HH:MM:SS) [now]: " VAL
+if [[ ! -z $VAL ]];then
+	export DATET=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
+fi
+printf "\n"
+
+read -p "Enter Product (SLC, GRD, OCN, S2MSI1C) [GRD]: " VAL
+if [[ ! -z $VAL ]];then
+	export PRODUCT=$VAL
+fi
+printf "\n"
+
+read -p "Enter Polarisation (HH, VV, HV, VH, HH HV, VV VH) [all]: " VAL
+if [[ ! -z $VAL ]];then
+	export POLAR=$VAL
+fi
+printf "\n"
+
+read -p "Enter Sensor Operational Mode (SM, IW, EW) [IW]: " VAL
+if [[ ! -z $VAL ]];then
+	export MODE=$VAL
+fi
+printf "\n"
+
+read -p "Enter Resolution(Full, High, Medium) [all]: " VAL
+if [[ ! -z $VAL ]];then
+	export RESOLU=$VAL
+fi
+printf "\n"
+
+read -p "Enter Orbit Direction (Ascending, Descending) [all]): " VAL
+if [[ ! -z $VAL ]];then
+	export DIREC=$VAL
+fi
+printf "\n"
+
 
 # MAKE QUERY
 export DHUS_DEST="https://scihub.copernicus.eu/dhus/"
@@ -118,7 +150,7 @@ export LIMIT_QUERY="&rows=1000&start=0"
 
 # For Tunning Only
 #export PLATFORM="Sentinel-1"
-#export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
+export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
 #export DATEF="2016-06-01T00:00:00.000Z"
 #export DATET="2016-06-02T00:00:00.000Z"
 #export PRODUCT="GRD"
@@ -221,18 +253,16 @@ if [ -f .failed.control.now.txt ]; then
     rm .failed.control.now.txt
 fi
 
-THREAD_NUMBER=1
-
 export LOGS=logs
 mkdir -p $LOGS
 
 cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 	echo "Downloading product ${3} from link ${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value"; 
-        ${WC} ${AUTH} ${TRIES} --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
+        ${WC} ${AUTH}  --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
 	test=$?;
 	if [ $test -eq 0 ]; then
 		echo "Product ${3} successfully downloaded at " `tail -2 ./$LOGS/log.${3}.log | head -1 | awk -F"(" '\''{print $2}'\'' | awk -F")" '\''{print $1}'\''`;
-		remoteMD5=$( ${WC} -qO- ${AUTH} ${TRIES} -c "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/Checksum/Value/$value" | awk -F">" '\''{print $3}'\'' | awk -F"<" '\''{print $1}'\'');
+		remoteMD5=$( ${WC} -qO- ${AUTH} -c "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/Checksum/Value/$value" | awk -F">" '\''{print $3}'\'' | awk -F"<" '\''{print $1}'\'');
 		# openssl: crytograph toolkit
 		localMD5=$( openssl md5 $ZIP/${3}".zip" | awk '\''{print $2}'\'');
 		localMD5Uppercase=$(echo "$localMD5" | tr '\''[:lower:]'\'' '\''[:upper:]'\'');
