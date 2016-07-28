@@ -6,7 +6,7 @@ echo ""
 export USR=""
 export PWD=""
 export OUTDIR="output"
-export TO_DOWNLOAD="product"
+export ZIP="zip"
 
 if [[ -z $USR ]]; then
 	read -p "Enter username: " VAL
@@ -31,18 +31,11 @@ export AUTH="--user=${USR} --password=${PWD}"
 
 export NAMEFILERESULTS="search_result.xml"
 
-if [[ -d $OUTDIR ]]; then
-	mkdir $OUTDIR
-fi
+mkdir -p $OUTDIR
+cd $OUTDIR
 
-if [[ -f $NAMEFILERESULTS ]]; then
-	rm $NAMEFILERESULTS
-fi
 
-echo "==================================================="
-echo "INPUT PARAMETER (Press ENTER if default, value in [])"
-echo ""
-
+# params
 export PLATFORM="Sentinel-1"
 export LOC=""
 export DATEF="NOW-1MONTH"
@@ -53,95 +46,86 @@ export MODE="IW"
 export RESOLU=""
 export DIREC=""
 
-# What if 2 of them are used
-read -p "Enter Flatform (Sentinel-1, Sentinel-2) [Sentinel-1]: " VAL
-if [[ ! -z $VAL ]];then
-	export PLATFORM=$VAL
+export INTERACTIVE=false
+
+if [[ INTERACTIVE == true ]]; then
+	echo "==================================================="
+	echo "INPUT PARAMETER (Press ENTER if default, value in [])"
+	echo ""
+
+	# What if 2 of them are used
+	read -p "Enter Flatform (Sentinel-1, Sentinel-2) [Sentinel-1]: " VAL
+	if [[ ! -z $VAL ]];then
+		export PLATFORM=$VAL
+	fi
+	printf "\n"
+
+	read -p "Enter Coordinate (P1Lon P1Lat, P2Lon P2Lat, …, PnLon PnLat, P1Lon P1Lat) [all]: " VAL
+	if [[ ! -z $VAL ]];then
+		export LOC="(${VAL})"
+		echo $LOC
+	fi
+	printf "\n"
+
+	read -p "Enter Start Date (yyyy-mm-dd HH:MM:SS) [1 month from now]: " VAL
+	# TODO: not null check
+	if [[ ! -z $VAL ]];then
+		export DATEF=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
+	fi
+	printf "\n"
+
+	read -p "Enter Coordinate (yyyy-mm-dd HH:MM:SS) [now]: " VAL
+	if [[ ! -z $VAL ]];then
+		export DATET=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
+	fi
+	printf "\n"
+
+	read -p "Enter Product (SLC, GRD, OCN, S2MSI1C) [GRD]: " VAL
+	if [[ ! -z $VAL ]];then
+		export PRODUCT=$VAL
+	fi
+	printf "\n"
+
+	read -p "Enter Polarisation (HH, VV, HV, VH, HH HV, VV VH) [all]: " VAL
+	if [[ ! -z $VAL ]];then
+		export POLAR=$VAL
+	fi
+	printf "\n"
+
+	read -p "Enter Sensor Operational Mode (SM, IW, EW) [IW]: " VAL
+	if [[ ! -z $VAL ]];then
+		export MODE=$VAL
+	fi
+	printf "\n"
+
+	read -p "Enter Resolution(Full, High, Medium) [all]: " VAL
+	if [[ ! -z $VAL ]];then
+		export RESOLU=$VAL
+	fi
+	printf "\n"
+
+	read -p "Enter Orbit Direction (Ascending, Descending) [all]): " VAL
+	if [[ ! -z $VAL ]];then
+		export DIREC=$VAL
+	fi
+	printf "\n"
 fi
-printf "\n"
-
-read -p "Enter Coordinate (P1Lon P1Lat, P2Lon P2Lat, …, PnLon PnLat, P1Lon P1Lat) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export LOC="(${VAL})"
-	echo $LOC
-fi
-printf "\n"
-
-read -p "Enter Start Date (yyyy-mm-dd HH:MM:SS) [1 month from now]: " VAL
-# TODO: not null check
-if [[ ! -z $VAL ]];then
-	export DATEF=$VAL
-fi
-printf "\n"
-
-read -p "Enter Coordinate (yyyy-mm-dd HH:MM:SS) [now]: " VAL
-if [[ ! -z $VAL ]];then
-	export DATET=$VAL
-fi
-printf "\n"
-
-read -p "Enter Product (SLC, GRD, OCN, S2MSI1C) [GRD]: " VAL
-if [[ ! -z $VAL ]];then
-	export PRODUCT=$VAL
-fi
-printf "\n"
-
-read -p "Enter Polarisation (HH, VV, HV, VH, HH HV, VV VH) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export POLAR=$VAL
-fi
-printf "\n"
-
-read -p "Enter Sensor Operational Mode (SM, IW, EW) [IW]: " VAL
-if [[ ! -z $VAL ]];then
-	export MODE=$VAL
-fi
-printf "\n"
-
-read -p "Enter Resolution(Full, High, Medium) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export RESOLU=$VAL
-fi
-printf "\n"
-
-read -p "Enter Orbit Direction (Ascending, Descending) [all]): " VAL
-if [[ ! -z $VAL ]];then
-	export DIREC=$VAL
-fi
-printf "\n"
-
-
-#export loc="footprint:\"Intersects(POLYGON((-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)))\""
-#export loc=""
-#export date="beginPosition:[2016-06-01T00:00:00.000Z TO 2016-06-30T23:59:59.999Z]endPosition:[2016-06-01T00:00:00.000Z TO 2016-06-30T23:59:59.999Z]"
-#export platform="platformname:Sentinel-1"
-#export prod="producttype:GRD"
-#export mode="sensoroperationalmode:IW"
-#export mode=""
-#export direction="orbitdirection:Descending"
-#export reso="medium"
-
-export DHUS_DEST="https://scihub.copernicus.eu/dhus/"
-export QUERY="search?q=*"
-
-
-export LIMIT_QUERY="&rows=1000&start=0"
 
 # MAKE QUERY
-# TODO: currently not so robust
-# TODO: remove tunning params
-export QUERY_STATEMENT="${DHUS_DEST}${QUERY}"
+export DHUS_DEST="https://scihub.copernicus.eu/dhus/"
+export QUERY="search?q=*"
+export LIMIT_QUERY="&rows=1000&start=0"
 
-export PLATFORM="Sentinel-1"
-export LOC=""
-export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
-export DATEF="2016-06-01T00:00:00.000Z"
-export DATET="2016-06-02T00:00:00.000Z"
-export PRODUCT="GRD"
-export POLAR=""
-export MODE="IW"
-export RESOLU=""
-export DIREC=""
+# For Tunning Only
+#export PLATFORM="Sentinel-1"
+#export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
+#export DATEF="2016-06-01T00:00:00.000Z"
+#export DATET="2016-06-02T00:00:00.000Z"
+#export PRODUCT="GRD"
+#export POLAR=""
+#export MODE="IW"
+#export RESOLU=""
+#export DIREC=""
 
 if [[ ! -z $RESOLU ]]; then
 	export QUERY="${QUERY} AND ${RESOLU}"
@@ -152,7 +136,6 @@ if [[ ! -z $PLATFORM ]]; then
 fi
 
 if [[ ! -z $LOC ]]; then
-	# TODO: loc format
 	export QUERY="${QUERY} AND footprint:\"Intersects(POLYGON(${LOC}))\""
 fi
 
@@ -179,7 +162,7 @@ fi
 export QUERY_STATEMENT="${DHUS_DEST}${QUERY}${LIMIT_QUERY}"
 
 ${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}"
-sleep 5
+sleep 3
 
 # Use NAMEFILERESULTS to Prepare downlaod main files
 cat "${NAMEFILERESULTS}" | grep '<id>' | tail -n +2 | cut -f2 -d'>' | cut -f1 -d'<' | cat -n > .product_id_list
@@ -214,9 +197,9 @@ echo ""
 if [ "${NPRODUCT}" == "0" ]; then exit 1; fi
 
 cat .product_list_withlink
-if [ -z $PRODUCTLIST ];then
-   export PRODUCTLIST="products-list.csv"
-fi
+
+export PRODUCTLIST=products-list.csv
+
 cp .product_list_withlink $PRODUCTLIST
 cat $PRODUCTLIST | cut -f2 -d$'\t' > .products-list-tmp.csv
 cat .products-list-tmp.csv | grep -v 'https' > .list_name_products.csv
@@ -227,7 +210,7 @@ export rv=0
 
 # download via wget, link info from INPUT_FILE
 export INPUT_FILE=product_list
-mkdir -p $OUTDIR
+mkdir -p $ZIP
 
 #Xargs works here as a thread pool, it launches a download for each thread (P 2), each single thread checks 
 #if the download is completed succesfully.
@@ -238,19 +221,20 @@ if [ -f .failed.control.now.txt ]; then
     rm .failed.control.now.txt
 fi
 
-THREAD_NUMBER=2
+THREAD_NUMBER=1
 
-mkdir logs/
+export LOGS=logs
+mkdir -p $LOGS
 
 cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 	echo "Downloading product ${3} from link ${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value"; 
-        ${WC} ${AUTH} ${TRIES} --progress=dot -e dotbytes=10M -c --output-file=./logs/log.${3}.log -O $OUTDIR/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
+        ${WC} ${AUTH} ${TRIES} --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
 	test=$?;
 	if [ $test -eq 0 ]; then
-		echo "Product ${3} successfully downloaded at " `tail -2 ./logs/log.${3}.log | head -1 | awk -F"(" '\''{print $2}'\'' | awk -F")" '\''{print $1}'\''`;
+		echo "Product ${3} successfully downloaded at " `tail -2 ./$LOGS/log.${3}.log | head -1 | awk -F"(" '\''{print $2}'\'' | awk -F")" '\''{print $1}'\''`;
 		remoteMD5=$( ${WC} -qO- ${AUTH} ${TRIES} -c "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/Checksum/Value/$value" | awk -F">" '\''{print $3}'\'' | awk -F"<" '\''{print $1}'\'');
 		# openssl: crytograph toolkit
-		localMD5=$( openssl md5 $OUTDIR/${3}".zip" | awk '\''{print $2}'\'');
+		localMD5=$( openssl md5 $ZIP/${3}".zip" | awk '\''{print $2}'\'');
 		localMD5Uppercase=$(echo "$localMD5" | tr '\''[:lower:]'\'' '\''[:upper:]'\'');
 		#localMD5Uppercase=1;
 		if [ "$remoteMD5" == "$localMD5Uppercase" ]; then
@@ -259,7 +243,7 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 		echo "Checksum for product ${3} failed";
 		echo "${0} ${1} ${2} ${3}" >> .failed.control.now.txt;
 		if [ ! -z $save_products_failed ];then  
-		      rm $OUTDIR/${3}".zip"
+		      rm $ZIP/${3}".zip"
 		fi
 		fi; 
 	fi;
@@ -268,6 +252,7 @@ done '
 
 # MD5 check
 CHECK_VAR=true
+
 if [ ! -z $check_save_failed ]; then
     if [ -f .failed.control.now.txt ];then
     	mv .failed.control.now.txt $FAILED
@@ -285,4 +270,7 @@ else
     fi
     fi
 fi
+
+cd ../
+
 echo 'the end'
