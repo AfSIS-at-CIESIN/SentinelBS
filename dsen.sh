@@ -364,6 +364,11 @@ export LOGS=logs
 mkdir -p $LOGS
 
 cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
+	if [[ -s $ZIP/${3}".zip" ]]; then
+		echo "Product ${3} already downloaded, skip"
+		break
+	fi
+
 	echo "Downloading product ${3} from link ${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value"; 
         ${WC} ${AUTH} -nc  --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
 	test=$?;
@@ -386,6 +391,8 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
         break;
 	else
 		echo "Product ${3} timeout during download, try again after ${SLEEPTIME} s."
+		# failed file must be removed
+		rm -f $ZIP/${3}."zip"
 		sleep $SLEEPTIME
 	fi;
 done '
