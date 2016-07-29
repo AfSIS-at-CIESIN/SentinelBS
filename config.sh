@@ -18,3 +18,5 @@ export MODE="IW"
 export RESOLU="high"
 export DIREC=""
 
+# error
+export NETWORKERROR="ERROR 503: Service Unavailable."

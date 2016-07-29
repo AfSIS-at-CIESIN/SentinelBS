@@ -282,14 +282,24 @@ export test=1
 # fault tolerant via $?
 while [[ ! test -eq 0 ]]
 do
-	${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}"
+	${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}" 2> .searcherrinfo
 	export test=$?
+
+	export ERR=`cat .searcherrinfo | awk '/./{line=$0} END{print line}'`
+	echo $ERR
+	if [[ "${ERR}" == *"${NETWORKERROR}"* ]];then
+		ne=1
+	else 
+		ne=0
+	fi
 	
-	if [[ ! test -eq 0 ]];then
+	if [[ ! ne -eq 0 && ! test -eq 0 ]];then
 		export SLEEPTIME=300
 		echo "network error, sleep ${SLEEPTIME}s."
 		sleep 300
 	fi
+
+	rm -f .searcherrinfo
 done
 
 # Use NAMEFILERESULTS to Prepare downlaod main files
