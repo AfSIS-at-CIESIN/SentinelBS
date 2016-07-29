@@ -6,7 +6,8 @@ export INTERACTIVE=""
 
 export OUTDIR="output"
 
-export THREAD_NUMBER=0
+# the hub allows no more than 2 downloads at same time
+export THREAD_NUMBER=2
 
 export PLATFORM="Sentinel-1"
 export LOC=$GHANA
