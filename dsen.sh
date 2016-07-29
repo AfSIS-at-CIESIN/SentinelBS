@@ -284,7 +284,12 @@ while [[ ! test -eq 0 ]]
 do
 	${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}"
 	export test=$?
-	sleep 300
+	
+	if [[ ! test -eq 0 ]];then
+		export SLEEPTIME=300
+		echo "network error, sleep ${SLEEPTIME}s."
+		sleep 300
+	fi
 done
 
 # Use NAMEFILERESULTS to Prepare downlaod main files
