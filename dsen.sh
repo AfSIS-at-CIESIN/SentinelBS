@@ -278,6 +278,8 @@ fi
 
 export QUERY_STATEMENT="${DHUS_DEST}${QUERY}${LIMIT_QUERY}"
 
+export SLEEPTIME=300
+
 export test=1
 # fault tolerant via $?
 while [[ ! test -eq 0 ]]
@@ -294,9 +296,8 @@ do
 	fi
 	
 	if [[ ! ne -eq 0 && ! test -eq 0 ]];then
-		export SLEEPTIME=300
-		echo "network error, sleep ${SLEEPTIME}s."
-		sleep 300
+		echo "network error, sleep ${SLEEPTIME} s."
+		sleep ${SLEEPTIME}
 	fi
 
 	rm -f .searcherrinfo
@@ -364,7 +365,7 @@ mkdir -p $LOGS
 
 cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 	echo "Downloading product ${3} from link ${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value"; 
-        ${WC} ${AUTH}  --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
+        ${WC} ${AUTH} -nc  --progress=dot -e dotbytes=10M -c --output-file=./$LOGS/log.${3}.log -O $ZIP/${3}".zip" "${DHUS_DEST}/odata/v1/Products('\''"$1"'\'')/\$value";
 	test=$?;
 	if [ $test -eq 0 ]; then
 		echo "Product ${3} successfully downloaded at " `tail -2 ./$LOGS/log.${3}.log | head -1 | awk -F"(" '\''{print $2}'\'' | awk -F")" '\''{print $1}'\''`;
@@ -382,8 +383,11 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 		      rm $ZIP/${3}".zip"
 		fi
 		fi; 
-	fi;
         break;
+	else
+		echo "Product ${3} timeout during download, try again after ${SLEEPTIME} s."
+		sleep $SLEEPTIME
+	fi;
 done '
 
 # MD5 check
@@ -406,6 +410,23 @@ else
     fi
     fi
 fi
+
+# remove empty files if exists
+# redownload would skip non-empty ones
+# and focus on zeros
+echo "ZIP FILES DOWNLOAD SUCCEEDED LOG" > successlog.txt
+echo "ZIP FILES DOWNLOAD FAILED LOG" > failurelog.txt
+
+for f in $ZIP/*
+do
+	#echo $f
+	if [[ ! -s $f ]];then
+		echo $f >> failurelog.txt
+		rm $f
+	else
+		echo $f >> successlog.txt
+	fi
+done
 
 cd ../
 

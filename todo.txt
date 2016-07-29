@@ -11,8 +11,10 @@ Demand:
 	4. regular param as in 160726
 
 ## TODO
-1. Fetch input queries
-2. resolution opt
+1. fault tolerant on server err while download
+
+### 160729
+1. Fault tolerant on query
 
 ### 160728
 1. Init downloader
