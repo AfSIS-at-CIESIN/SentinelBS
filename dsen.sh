@@ -1,21 +1,109 @@
 echo "Dsen: Downloader for Sentinels Scientific Data Hub"
 
 # PARSE NON-INTERACTIVE FLAGS
-export INTERACTIVE=true
-
 export USR=""
 export PWD=""
 
-#while getopts ":u;p;" opt; do
+#export OUTDIR="output"
+#
+#export THREAD_NUMBER=0
+#
+#export PLATFORM="Sentinel-1"
+#export LOC=""
+#export DATEF="NOW-1MONTH"
+#export DATET="NOW"
+#export PRODUCT="GRD"
+#export POLAR=""
+#export MODE="IW"
+#export RESOLU=""
+#export DIREC=""
+
+
+#while getopts ";I;U;P;O;T;pf;l;df;dt;pd;pl;m;r;d" opt; do
 #  case $opt in
-#	u)
-#		USR=$OPTARG
+#	I)
+#	if [[ ! -z $OPTARG ]]; then
+#		export INTERACTIVE=$OPTARG	
+#	fi
+#	;;
+#
+#	U)
+#	if [[ ! -z $OPTARG ]]; then
+#		export USR=$OPTARG
+#	fi
 #	;;
 #
 #	p)
-#		PWD=$OPTARG
+#	if [[ ! -z $OPTARG ]]; then
+#		export PWD=$OPTARG
+#	fi
 #	;;
 #
+#	O)
+#	if [[ ! -z $OPTARG ]]; then
+#		export OUTDIR=$OPTARG
+#	fi
+#	;;
+#
+#	T)
+#	if [[ ! -z $OPTARG ]]; then
+#		export THREAD_NUMBER=$OPTARG
+#	fi
+#	;;
+#
+#	pf)
+#	if [[ ! -z $OPTARG ]]; then
+#		export PLATFORM=$OPTARG
+#	fi
+#	;;
+#
+#	l)
+#	if [[ ! -z $OPTARG ]]; then
+#		export LOC=$OPTARG
+#	fi
+#	;;
+#
+#	df)
+#	if [[ ! -z $OPTARG ]]; then
+#		export DATEF=$OPTARG
+#	fi
+#	;;
+#
+#	dt)
+#	if [[ ! -z $OPTARG ]]; then
+#		export DATET=$OPTARG
+#	fi
+#	;;
+#
+#	pd)
+#	if [[ ! -z $OPTARG ]]; then
+#		export PRODUCT=$OPTARG
+#	fi
+#	;;
+#	
+#	pl)
+#	if [[ ! -z $OPTARG ]]; then
+#		export POLAR=$OPTARG
+#	fi
+#	;;
+#
+#	m)
+#	if [[ ! -z $OPTARG ]]; then
+#		export MODE=$OPTARG
+#	fi
+#	;;
+#
+#	r)
+#	if [[ ! -z $OPTARG ]]; then
+#		export RESOLU=$OPTARG
+#	fi
+#	;;
+#
+#	d)
+#	if [[ ! -z $OPTARG ]]; then
+#		export DIREC=$OPTARG
+#	fi
+#	;;
 #  esac
 #done
 
@@ -46,10 +134,11 @@ export NAMEFILERESULTS="search_result.xml"
 
 
 #
-export OUTDIR="output"
+if [[ -z $INTERACTIVE ]]; then
+	source config.sh
+fi
 
-export THREAD_NUMBER=0
-
+if [[ ! -z $INTERACTIVE ]]; then
 echo "=================================================="
 echo "Download Parameters Configuration (press ENTER if default, value in [])"
 echo ""
@@ -65,22 +154,13 @@ if [[ ! -z $VAL ]]; then
 	export THREAD_NUMBER=$VAL
 fi
 printf "\n"
+fi
 
 mkdir -p $OUTDIR
 cd $OUTDIR
 
-
 # params
-export PLATFORM="Sentinel-1"
-export LOC=""
-export DATEF="NOW-1MONTH"
-export DATET="NOW"
-export PRODUCT="GRD"
-export POLAR=""
-export MODE="IW"
-export RESOLU=""
-export DIREC=""
-
+if [[ ! -z $INTERACTIVE ]]; then
 echo "==================================================="
 echo "INPUT PARAMETER (Press ENTER if default, value in [])"
 echo ""
@@ -141,6 +221,11 @@ if [[ ! -z $VAL ]];then
 	export DIREC=$VAL
 fi
 printf "\n"
+fi
+
+# PARAM check before make query
+#export DATEF=`date -d $DATEF +"%Y-%m-%dT%H:%M:%S.%3NZ"`
+#export DATET=`date -d $DATET +"%Y-%m-%dT%H:%M:%S.%3NZ"`
 
 
 # MAKE QUERY
@@ -150,7 +235,7 @@ export LIMIT_QUERY="&rows=1000&start=0"
 
 # For Tunning Only
 #export PLATFORM="Sentinel-1"
-export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
+#export LOC="(-10.452155411566443 35.96756889555928,1.4698695076076014 35.96756889555928,1.4698695076076014 44.19817173875521,-10.452155411566443 44.19817173875521,-10.452155411566443 35.96756889555928)"
 #export DATEF="2016-06-01T00:00:00.000Z"
 #export DATET="2016-06-02T00:00:00.000Z"
 #export PRODUCT="GRD"
@@ -193,8 +278,14 @@ fi
 
 export QUERY_STATEMENT="${DHUS_DEST}${QUERY}${LIMIT_QUERY}"
 
-${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}"
-sleep 3
+export test=1
+# fault tolerant via $?
+while [[ ! test -eq 0 ]]
+do
+	${WC} ${AUTH} -O "${NAMEFILERESULTS}" "${QUERY_STATEMENT}"
+	export test=$?
+	sleep 300
+done
 
 # Use NAMEFILERESULTS to Prepare downlaod main files
 cat "${NAMEFILERESULTS}" | grep '<id>' | tail -n +2 | cut -f2 -d'>' | cut -f1 -d'<' | cat -n > .product_id_list
