@@ -363,7 +363,7 @@ fi
 export LOGS=logs
 mkdir -p $LOGS
 
-cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
+export DOWNLOAD=' while : ; do
 	if [[ -s $ZIP/${3}".zip" ]]; then
 		echo "Product ${3} already downloaded, skip"
 		break
@@ -396,6 +396,8 @@ cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 		sleep $SLEEPTIME
 	fi;
 done '
+
+cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c $DOWNLOAD
 
 # MD5 check
 CHECK_VAR=true
