@@ -351,6 +351,18 @@ export rv=0
 export INPUT_FILE=product_list
 mkdir -p $ZIP
 
+# mv prev failed MD5 file to history
+if [[ -s failed_MD5_check_list.txt ]];then
+	if [[ -s failed_MD5_check_list_history.txt ]]; then
+		date >> failed_MD5_check_list_history.txt
+		cat failed_MD5_check_list.txt >> failed_MD5_check_list_history.txt
+	else
+		date > failed_MD5_check_list_history.txt
+		cat failed_MD5_check_list.txt > failed_MD5_check_list_history.txt
+	fi
+	rm failed_MD5_check_list.txt
+fi
+
 #Xargs works here as a thread pool, it launches a download for each thread (P 2), each single thread checks 
 #if the download is completed succesfully.
 #The condition "[[ $? -ne 0 ]] || break" checks the first operand, if it is satisfied the break is skipped, instead if it fails 
@@ -421,6 +433,10 @@ else
     fi
 fi
 
+# remove those which MD5 failed
+#cat failed_MD5_check_list.txt | cut -f4 -d ' ' | awk '{print "zip/"$1".zip"}' | xargs rm
+
+
 # remove empty files if exists
 # redownload would skip non-empty ones
 # and focus on zeros
@@ -429,7 +445,12 @@ echo "ZIP FILES DOWNLOAD FAILED LOG" > failurelog.txt
 
 for f in $ZIP/*
 do
-	#echo $f
+	# rm MD5 failed ones
+	export in_failure_log=`grep $(basename $f | cut -f1 -d ".") failed_MD5_check_list.txt`
+	if [[ ! -z $in_failure_log ]];then
+		rm $f
+	fi
+
 	if [[ ! -s $f ]];then
 		echo $f >> failurelog.txt
 		rm $f
@@ -441,3 +462,7 @@ done
 cd ../
 
 echo 'the end'
+export OUTDIR="output"
+export ZIP="zip"
+cd $OUTDIR
+
