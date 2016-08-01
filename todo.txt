@@ -11,13 +11,14 @@ Demand:
 	4. regular param as in 160726
 
 ## TODO
-1. redownload those with MD5 check failed
-2. Make sure redownload solves MD5 check failure
 
 ### 160801
 1. Some MD5 failed files need redownload:
 	e.g. S1A_IW_GRDH_1SDV_20160131T182538_20160131T182607_009742_00E3BA_7E5E.zip MD5 check failed
 	e.g. S1A_IW_GRDH_1SDV_20160331T182633_20160331T182658_010617_00FCD5_C9D8.zip MD5 check passed
+2. redownload those with MD5 check failed
+3. Make sure redownload solves MD5 check failure
+4. batch transfer files to another server -- scp
 
 ### 160729
 1. Fault tolerant on query
