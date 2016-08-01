@@ -363,7 +363,7 @@ fi
 export LOGS=logs
 mkdir -p $LOGS
 
-export DOWNLOAD=' while : ; do
+cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c ' while : ; do
 	if [[ -s $ZIP/${3}".zip" ]]; then
 		echo "Product ${3} already downloaded, skip"
 		break
@@ -381,14 +381,17 @@ export DOWNLOAD=' while : ; do
 		#localMD5Uppercase=1;
 		if [ "$remoteMD5" == "$localMD5Uppercase" ]; then
 			echo "Product ${3} successfully MD5 checked";
+        		break;
 		else
 		echo "Checksum for product ${3} failed";
 		echo "${0} ${1} ${2} ${3}" >> .failed.control.now.txt;
+		rm -f $ZIP/${3}."zip";
+		echo "Removed MD5-check-failed product ${3}, restart again";
+		sleep 3;
 		if [ ! -z $save_products_failed ];then  
 		      rm $ZIP/${3}".zip"
 		fi
 		fi; 
-        break;
 	else
 		echo "Product ${3} timeout during download, try again after ${SLEEPTIME} s."
 		# failed file must be removed
@@ -396,8 +399,6 @@ export DOWNLOAD=' while : ; do
 		sleep $SLEEPTIME
 	fi;
 done '
-
-cat ${INPUT_FILE} | xargs -n 4 -P ${THREAD_NUMBER} sh -c $DOWNLOAD
 
 # MD5 check
 CHECK_VAR=true
