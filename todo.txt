@@ -1,0 +1,15 @@
+# CIESIN HPC Intern
+
+## Batch Data Cleaning via sentinel 1 toolboox
+Features:
+	1. Assign folder path
+	2. Customized location
+
+## TODO
+1. Read through toolbox mannual
+2. Find out where lies the operations needed
+
+### 08.02
+1. Find related tutorial
+	1. There is one sh called gpt.sh in S1TBX folder
+	2. Read help doc "Graph Tools" section
