@@ -7,9 +7,18 @@ Features:
 	3. Merge Every data files to a Mosaic
 	4. Create Clip from Mosaic
 
-## TODO
-1. Maybe the problem (null file) is from the fact that the test graph is not correct. Make sure that we have a correct graph before moving on to testing.
+The Calibration is from system default graph
+The Mosaic is customized from ./graph folder
+graph need revision to take input parameters
 
+## TODO
+
+
+### 08.08
+1. find if possible to do batch calibration -- seems not possible for desired result
+2. try this -- for loop calibration; batch mosaic
+3. Maybe the problem (null file) is from the fact that the test graph is not correct. Make sure that we have a correct graph before moving on to testing. -- The problem actually lies in the fact that revision is needed for taking input params
+4. complete processor, test in real data
 
 ### 08.04
 1. Graph preprocessing is possible -- see helper

@@ -1,11 +1,68 @@
 # Batch cleaning via sentinenl 1 toolbox
-export infolder="infile"
-export outfolder="output"
-export graph="ReadWriteGraph.xml"
 
-for f in $infolder/*
+export PATH=$PATH":/opt/S1TBX/"
+
+echo "Batch Processing Tool for Sentinel1 Data"
+echo "========================================"
+
+export TESTFLAG=1
+
+if [[ $TESTFLAG -eq 1 ]]; then
+	export DIR="."
+	export INFOLDER="infile"
+	export OUTFOLDER="output"
+	export CALIB_FOLDER=".calib.tmp"
+	
+	echo "TEST in " $DIR
+else
+	export DIR="/data2/sentinel1/"
+	export INFOLDER="ghana"
+	export OUTFOLDER="analysis"
+	export CALIB_FOLDER=".calib.tmp"
+	
+	echo "RUN in " $DIR
+fi
+
+export GRAPH_FOLDER="graph"
+export CALIB="CalibrationGraph.xml"
+export MOSAIC="MosaicGraph.xml"
+
+if [[ -f $DIR/$OUTFOLDER ]]; then
+	mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
+fi
+
+mkdir -p $DIR/$OUTFOLDER
+mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
+
+# parallel by xargs for loop
+for f in $DIR/$INFOLDER/*.zip
 do
 	echo $f
-	export name=`basename $f`
-	./gpt.sh $graph $f -t $outputfolder/$name".dim"
+done |
+(
+	export PATH=$PATH":/opt/S1TBX/"
+	xargs -I{} -P 8 sh -c '
+		echo "processing {}"
+		export name=`basename {} | cut -d '.' -f 1`
+		export outfile=${DIR}/${OUTFOLDER}/${CALIB_FOLDER}/${name}".dim"
+		# Use default calibration
+		gpt.sh Calibration -Ssource={} -t ${outfile}'
+)
+
+export FILELIST=""
+
+for f in $DIR/$OUTFOLDER/$CALIB_FOLDER/*.dim
+do
+	export FILELIST=${FILELIST}","$f
 done
+
+export FILELIST=`echo $FILELIST | cut -c 2-`
+echo "FILELIST"
+echo $FILELIST
+
+export MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic.dim"
+gpt.sh $GRAPH_FOLDER/$MOSAIC -Pfilelist=$FILELIST -t $DIR/$OUTFOLDER/$MOSAICNAME
+
+rm -rf $DIR/OUTFOLDER/CALIB
+chmod 777 $DIR/$OUTFOLDER/$MOSAICNAME
+echo "The end"

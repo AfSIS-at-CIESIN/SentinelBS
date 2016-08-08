@@ -1,0 +1,74 @@
+<graph id="Graph">
+  <version>1.0</version>
+  <node id="Write">
+    <operator>Write</operator>
+    <sources>
+      <sourceProduct refid="SAR-Mosaic"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <file>$target</file>
+      <formatName>BEAM-DIMAP</formatName>
+    </parameters>
+  </node>
+  <node id="Calibration">
+    <operator>Calibration</operator>
+    <sources>
+      <sourceProduct refid="ProductSet-Reader"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <sourceBands/>
+      <auxFile>Latest Auxiliary File</auxFile>
+      <externalAuxFile/>
+      <outputImageInComplex>false</outputImageInComplex>
+      <outputImageScaleInDb>false</outputImageScaleInDb>
+      <createGammaBand>false</createGammaBand>
+      <createBetaBand>false</createBetaBand>
+      <selectedPolarisations/>
+      <outputSigmaBand>true</outputSigmaBand>
+      <outputGammaBand>false</outputGammaBand>
+      <outputBetaBand>false</outputBetaBand>
+      <outputDNBand>false</outputDNBand>
+    </parameters>
+  </node>
+  <node id="SAR-Mosaic">
+    <operator>SAR-Mosaic</operator>
+    <sources>
+      <sourceProduct refid="Calibration"/>
+    </sources>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <sourceBands/>
+      <resamplingMethod>NEAREST_NEIGHBOUR</resamplingMethod>
+      <average>true</average>
+      <normalizeByMean>true</normalizeByMean>
+      <gradientDomainMosaic>false</gradientDomainMosaic>
+      <pixelSize>0.0</pixelSize>
+      <sceneWidth>0</sceneWidth>
+      <sceneHeight>0</sceneHeight>
+      <feather>20</feather>
+      <maxIterations>5000</maxIterations>
+      <convergenceThreshold>1.0E-4</convergenceThreshold>
+    </parameters>
+  </node>
+  <node id="ProductSet-Reader">
+    <operator>ProductSet-Reader</operator>
+    <sources/>
+    <parameters class="com.bc.ceres.binding.dom.XppDomElement">
+      <fileList>$filelist</fileList>
+    </parameters>
+  </node>
+  <applicationData id="Presentation">
+    <Description/>
+    <node id="Write">
+      <displayPosition x="455.0" y="135.0"/>
+    </node>
+    <node id="SAR-Mosaic">
+      <displayPosition x="322.0" y="125.0"/>
+    </node>
+    <node id="Calibration">
+      <displayPosition x="183.0" y="123.0"/>
+    </node>
+    <node id="ProductSet-Reader">
+      <displayPosition x="14.0" y="121.0"/>
+    </node>
+  </applicationData>
+</graph>
