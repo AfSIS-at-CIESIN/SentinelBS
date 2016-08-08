@@ -5,7 +5,7 @@ export PATH=$PATH":/opt/S1TBX/"
 echo "Batch Processing Tool for Sentinel1 Data"
 echo "========================================"
 
-export TESTFLAG=1
+export TESTFLAG=0
 
 if [[ $TESTFLAG -eq 1 ]]; then
 	export DIR="."
@@ -15,7 +15,7 @@ if [[ $TESTFLAG -eq 1 ]]; then
 	
 	echo "TEST in " $DIR
 else
-	export DIR="/data2/sentinel1/"
+	export DIR="/data2/sentinel1"
 	export INFOLDER="ghana"
 	export OUTFOLDER="analysis"
 	export CALIB_FOLDER=".calib.tmp"
@@ -35,13 +35,17 @@ mkdir -p $DIR/$OUTFOLDER
 mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
 
 # parallel by xargs for loop
+# max p allowed by server before crush
+export MAXP=4
+export NP=$MAXP
+
 for f in $DIR/$INFOLDER/*.zip
 do
 	echo $f
 done |
 (
 	export PATH=$PATH":/opt/S1TBX/"
-	xargs -I{} -P 8 sh -c '
+	xargs -I{} -P $NP sh -c '
 		echo "processing {}"
 		export name=`basename {} | cut -d '.' -f 1`
 		export outfile=${DIR}/${OUTFOLDER}/${CALIB_FOLDER}/${name}".dim"
@@ -61,7 +65,7 @@ echo "FILELIST"
 echo $FILELIST
 
 export MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic.dim"
-gpt.sh $GRAPH_FOLDER/$MOSAIC -Pfilelist=$FILELIST -t $DIR/$OUTFOLDER/$MOSAICNAME
+gpt.sh $GRAPH_FOLDER/$MOSAIC -Pfilelist=$FILELIST -t $DIR/$OUTFOLDER/$MOSAICNAME -q 16
 
 rm -rf $DIR/OUTFOLDER/CALIB
 chmod 777 $DIR/$OUTFOLDER/$MOSAICNAME
