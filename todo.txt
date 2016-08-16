@@ -14,6 +14,9 @@ graph need revision to take input parameters
 ## TODO
 
 
+### 08.15
+1. revise for real workflow
+
 ### 08.08
 1. find if possible to do batch calibration -- seems not possible for desired result
 2. try this -- for loop calibration; batch mosaic
