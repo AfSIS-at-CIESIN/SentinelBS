@@ -1,0 +1,6 @@
+.nfs*
+.*.
+*.xml
+logs/
+output/
+run.sh

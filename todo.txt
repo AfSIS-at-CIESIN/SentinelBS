@@ -1,0 +1,70 @@
+# CIESIN INTERN
+
+## Sentinel Download Bash Script
+1. Read through Sentinel API doc first
+2. HPC? From right now I could only see submit job for high performance computation, may not be so useful for downloading files
+
+Demand:
+	1. specific resolution lvl in IW
+	2. satelliate desc asc specified
+	3. timeout prevention
+	4. regular param as in 160726
+
+## TODO
+
+### 160803
+1. to S1A_IW_GRDH_1SDV_20160226T181052_20160226T181117_010121_00EEBE_FB7E.zip
+
+### 160801
+1. Some MD5 failed files need redownload:
+	e.g. S1A_IW_GRDH_1SDV_20160131T182538_20160131T182607_009742_00E3BA_7E5E.zip MD5 check failed
+	e.g. S1A_IW_GRDH_1SDV_20160331T182633_20160331T182658_010617_00FCD5_C9D8.zip MD5 check passed
+2. redownload those with MD5 check failed
+3. Make sure redownload solves MD5 check failure
+4. batch transfer files to another server -- scp
+
+### 160729
+1. Fault tolerant on query
+2. fault tolerant on server err while download
+
+### 160728
+1. Init downloader
+2. Special credit to dhusget
+
+### 160727
+1. Read through bash example, write comments
+	1. Global vars are EXPORT-ed
+	2. Abundant sanity check
+	3. Check use file & repo instead of vars
+	4. Main exec done with xargs for parallel, sh -c "balabala" for clearer block view
+2. Read through API doc
+	Useful Ref https://scihub.copernicus.eu/userguide/3FullTextSearch "Search Keywords"
+	*. base url: https://scihub.copernicus.eu/dhus/search?q=
+	*. platformname: Sentinel-1
+	*. productType: GRD
+	*. beginPosition:[BEG TO END] 
+	*. polarisationmode: VV, HH, ... (default all)
+	*. footprint:"intersects(POLYGON((P1Lon P1Lat, P2Lon P2Lat)))"
+	*. orbitdirection:Ascending / Descending
+	*. sensoroperationlmode:IW
+	Connection via " AND ", whitespace acceptable
+	Return a RSS Feed. Extendable to livestream in Python
+3. Refer to ABS (not done)
+4. Feed streaming complete
+
+### 160726
+Questions:
+	1. Sensing & ingestion period, the differences?
+	1.A. yes. Use sensing. Ingestion means upload time
+	2. Resolution high in comparison with 10m, 25m ... so what's the transformation?
+
+1. interface:
+	1.1. config: product type, polarisation, sensor mode 
+	1.2. param: longitude & latitude (rectangle region, 2 pts), duration (datetime format, start - end) 
+	1.3. via restful api
+2. in that case, example operation would be:
+	dsen long1 lat1 long2 lat2 start end
+	dsen -t grd -l hw -m iw long1 lat1 long2 lat2 start end
+3. desc asc are keywords in search query by default
+
+
