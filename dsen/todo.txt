@@ -11,6 +11,8 @@ Demand:
 	4. regular param as in 160726
 
 ## TODO
+1. Revise script so that files from each scene fall into one repo
+2. See if there is way to make reusable script
 
 ### 160803
 1. to S1A_IW_GRDH_1SDV_20160226T181052_20160226T181117_010121_00EEBE_FB7E.zip
