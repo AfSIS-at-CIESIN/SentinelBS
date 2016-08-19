@@ -1,0 +1,38 @@
+# CIESIN HPC Intern
+
+## Batch Data Processing via sentinel 1 toolboox
+Features:
+	1. Assign folder path
+	2. Customized location
+	3. Merge Every data files to a Mosaic
+	4. Create Clip from Mosaic
+
+The Calibration is from system default graph
+The Mosaic is customized from ./graph folder
+graph need revision to take input parameters
+
+## TODO
+
+
+### 08.15
+1. revise for real workflow
+
+### 08.08
+1. find if possible to do batch calibration -- seems not possible for desired result
+2. try this -- for loop calibration; batch mosaic
+3. Maybe the problem (null file) is from the fact that the test graph is not correct. Make sure that we have a correct graph before moving on to testing. -- The problem actually lies in the fact that revision is needed for taking input params
+4. complete processor, test in real data
+
+### 08.04
+1. Graph preprocessing is possible -- see helper
+2. Start from simple eg (one file, one operation):
+	1. start from:
+	 gpt.sh Read -Pfile='infile/S1A_IW_GRDH_1SDV_20160111T175352_20160111T175417_009450_00DB31_C0C7.zip'
+	This one works. But with designated graph, not working
+3. The null file actually stands for input graph? -- Yes, input graph has no input node
+4. Mosaic & others, if we could enter s1tbx w/o GUI, there is a way. There are included in the graph analysis tools.
+
+### 08.02
+1. Find related tutorial
+	1. There is one sh called gpt.sh in S1TBX folder
+	2. Read help doc "Graph Tools" section
