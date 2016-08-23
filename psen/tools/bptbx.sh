@@ -24,7 +24,7 @@ else
 fi
 
 export GRAPH_FOLDER="graph"
-export CALIB="CalibrationGraph.xml"
+export CALIB="PreprocessingGraph.xml"
 export MOSAIC="MosaicGraph.xml"
 
 if [[ -f $DIR/$OUTFOLDER ]]; then

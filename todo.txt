@@ -2,3 +2,4 @@
 
 ## TODO
 1. clean repo structure for each tool
+2. reconstruct resuable script after prototyping success

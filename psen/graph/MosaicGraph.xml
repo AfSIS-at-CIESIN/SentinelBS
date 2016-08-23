@@ -24,7 +24,7 @@
     </sources>
     <parameters class="com.bc.ceres.binding.dom.XppDomElement">
       <sourceBands/>
-      <resamplingMethod>NEAREST_NEIGHBOUR</resamplingMethod>
+      <resamplingMethod>CUBIC_CONVOLUTION</resamplingMethod>
       <average>true</average>
       <normalizeByMean>true</normalizeByMean>
       <gradientDomainMosaic>false</gradientDomainMosaic>

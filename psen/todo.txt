@@ -14,7 +14,8 @@ graph need revision to take input parameters
 2. combine the logic discussed to products:
 	1. Revise to see if some parameters could be applied to Mosaic Graph
 
-### 08.16
+### 08.23
+1. aware that the External DEM parameter in preprocessing graph has a external file location, which is a customized one. So whenever you try the script on new server, be sure to get that settled
 
 ### 08.15
 1. revise for real workflow
