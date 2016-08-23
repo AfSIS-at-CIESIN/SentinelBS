@@ -1,130 +1,13 @@
+#!/bin/bash
+
+source config.sh
+
 echo "Dsen: Downloader for Sentinels Scientific Data Hub"
 
 # PARSE NON-INTERACTIVE FLAGS
-export USR=""
-export PWD=""
 
-#export OUTDIR="output"
-#
-#export THREAD_NUMBER=0
-#
-#export PLATFORM="Sentinel-1"
-#export LOC=""
-#export DATEF="NOW-1MONTH"
-#export DATET="NOW"
-#export PRODUCT="GRD"
-#export POLAR=""
-#export MODE="IW"
-#export RESOLU=""
-#export DIREC=""
-
-
-#while getopts ";I;U;P;O;T;pf;l;df;dt;pd;pl;m;r;d" opt; do
-#  case $opt in
-#	I)
-#	if [[ ! -z $OPTARG ]]; then
-#		export INTERACTIVE=$OPTARG	
-#	fi
-#	;;
-#
-#	U)
-#	if [[ ! -z $OPTARG ]]; then
-#		export USR=$OPTARG
-#	fi
-#	;;
-#
-#	p)
-#	if [[ ! -z $OPTARG ]]; then
-#		export PWD=$OPTARG
-#	fi
-#	;;
-#
-#	O)
-#	if [[ ! -z $OPTARG ]]; then
-#		export OUTDIR=$OPTARG
-#	fi
-#	;;
-#
-#	T)
-#	if [[ ! -z $OPTARG ]]; then
-#		export THREAD_NUMBER=$OPTARG
-#	fi
-#	;;
-#
-#	pf)
-#	if [[ ! -z $OPTARG ]]; then
-#		export PLATFORM=$OPTARG
-#	fi
-#	;;
-#
-#	l)
-#	if [[ ! -z $OPTARG ]]; then
-#		export LOC=$OPTARG
-#	fi
-#	;;
-#
-#	df)
-#	if [[ ! -z $OPTARG ]]; then
-#		export DATEF=$OPTARG
-#	fi
-#	;;
-#
-#	dt)
-#	if [[ ! -z $OPTARG ]]; then
-#		export DATET=$OPTARG
-#	fi
-#	;;
-#
-#	pd)
-#	if [[ ! -z $OPTARG ]]; then
-#		export PRODUCT=$OPTARG
-#	fi
-#	;;
-#	
-#	pl)
-#	if [[ ! -z $OPTARG ]]; then
-#		export POLAR=$OPTARG
-#	fi
-#	;;
-#
-#	m)
-#	if [[ ! -z $OPTARG ]]; then
-#		export MODE=$OPTARG
-#	fi
-#	;;
-#
-#	r)
-#	if [[ ! -z $OPTARG ]]; then
-#		export RESOLU=$OPTARG
-#	fi
-#	;;
-#
-#	d)
-#	if [[ ! -z $OPTARG ]]; then
-#		export DIREC=$OPTARG
-#	fi
-#	;;
-#  esac
-#done
-
-
-
-# INTERACTIVE MODE
+# INTERACTIVE MODE (Depreciated)
 echo "====================================================="
-echo "Inital Configuration"
-echo ""
-
-if [[ -z $USR ]]; then
-	read -p "Enter username: " VAL
-	export USR=$VAL
-	printf "\n"
-fi
-
-if [[ -z $PWD ]]; then
-	read -s -p "Enter password: " VAL
-	export PWD=$VAL
-	printf "\n\n"
-fi
 
 export WC="wget --no-check-certificate"
 export AUTH="--user=${USR} --password=${PWD}"
@@ -132,100 +15,9 @@ export AUTH="--user=${USR} --password=${PWD}"
 export ZIP="zip"
 export NAMEFILERESULTS="search_result.xml"
 
-
 #
-if [[ -z $INTERACTIVE ]]; then
-	source config.sh
-fi
-
-if [[ ! -z $INTERACTIVE ]]; then
-echo "=================================================="
-echo "Download Parameters Configuration (press ENTER if default, value in [])"
-echo ""
-
-read -p "Enter output folder name [output]: " VAL
-if [[ ! -z $VAL ]]; then
-	export OUTDIR="${VAL}"
-fi
-printf "\n"
-
-read -p "Enter download thread number [as many as possible]: " VAL
-if [[ ! -z $VAL ]]; then
-	export THREAD_NUMBER=$VAL
-fi
-printf "\n"
-fi
-
 mkdir -p $OUTDIR
 cd $OUTDIR
-
-# params
-if [[ ! -z $INTERACTIVE ]]; then
-echo "==================================================="
-echo "INPUT PARAMETER (Press ENTER if default, value in [])"
-echo ""
-
-# What if 2 of them are used
-read -p "Enter Flatform (Sentinel-1, Sentinel-2) [Sentinel-1]: " VAL
-if [[ ! -z $VAL ]];then
-	export PLATFORM=$VAL
-fi
-printf "\n"
-
-read -p "Enter Coordinate (P1Lon P1Lat, P2Lon P2Lat, …, PnLon PnLat, P1Lon P1Lat) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export LOC="(${VAL})"
-	echo $LOC
-fi
-printf "\n"
-
-read -p "Enter Start Date (yyyy-mm-dd HH:MM:SS) [1 month from now]: " VAL
-# TODO: not null check
-if [[ ! -z $VAL ]];then
-	export DATEF=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
-fi
-printf "\n"
-
-read -p "Enter Coordinate (yyyy-mm-dd HH:MM:SS) [now]: " VAL
-if [[ ! -z $VAL ]];then
-	export DATET=`date -d $VAL +"%Y-%m-%dT%H:%M:%S.%3NZ"`
-fi
-printf "\n"
-
-read -p "Enter Product (SLC, GRD, OCN, S2MSI1C) [GRD]: " VAL
-if [[ ! -z $VAL ]];then
-	export PRODUCT=$VAL
-fi
-printf "\n"
-
-read -p "Enter Polarisation (HH, VV, HV, VH, HH HV, VV VH) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export POLAR=$VAL
-fi
-printf "\n"
-
-read -p "Enter Sensor Operational Mode (SM, IW, EW) [IW]: " VAL
-if [[ ! -z $VAL ]];then
-	export MODE=$VAL
-fi
-printf "\n"
-
-read -p "Enter Resolution(Full, High, Medium) [all]: " VAL
-if [[ ! -z $VAL ]];then
-	export RESOLU=$VAL
-fi
-printf "\n"
-
-read -p "Enter Orbit Direction (Ascending, Descending) [all]): " VAL
-if [[ ! -z $VAL ]];then
-	export DIREC=$VAL
-fi
-printf "\n"
-fi
-
-# PARAM check before make query
-#export DATEF=`date -d $DATEF +"%Y-%m-%dT%H:%M:%S.%3NZ"`
-#export DATET=`date -d $DATET +"%Y-%m-%dT%H:%M:%S.%3NZ"`
 
 
 # MAKE QUERY

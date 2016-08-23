@@ -1,5 +1,5 @@
 export TESTD="tool/testrepo/"
-export OUTD="/hmt/sirius1/prv0/u/5/m/mw3065/dsen/output/zip/"
+export OUTD="/hmt/sirius1/prv0/u/5/m/mw3065/sentinel/dsen/output/zip/"
 
 export YANNI="yzhan"
 export MENGQ="mwang"
@@ -15,4 +15,5 @@ export CONT=$ALL
 cd $ZIPDIR
 
 # scp $CONT $USER@$ADDR:$DEST
-rsync -av --ignore-existing $OUTD $USER@$ADDR:$DEST
+# rsync -av --ignore-existing $OUTD $USER@$ADDR:$DEST
+rsync -av $OUTD $USER@$ADDR:$DEST

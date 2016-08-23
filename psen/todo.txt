@@ -1,6 +1,4 @@
-# CIESIN HPC Intern
-
-## Batch Data Processing via sentinel 1 toolboox
+# Batch Data Processing via sentinel 1 toolboox
 Features:
 	1. Assign folder path
 	2. Customized location
@@ -13,8 +11,10 @@ graph need revision to take input parameters
 
 ## TODO
 1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
-2. Xue's replies are very useful, stick to that for revision
+2. combine the logic discussed to products:
+	1. Revise to see if some parameters could be applied to Mosaic Graph
 
+### 08.16
 
 ### 08.15
 1. revise for real workflow
