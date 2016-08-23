@@ -1,0 +1,3 @@
+# Downloader for USGS Data
+Configuration in config.sh
+Plz revise according to format
