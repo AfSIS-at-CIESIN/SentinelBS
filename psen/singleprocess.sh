@@ -2,19 +2,10 @@
 source config.sh
 
 # Batch cleaning via sentinenl 1 toolbox
+echo ""
 echo "Batch Processing Tool for Sentinel1 Data"
+echo "Part I: preprocessing"
 echo "========================================"
-
-if [[ $TESTFLAG -eq 1 ]]; then
-	export DIR="."
-	export INFOLDER="infile"
-	export OUTFOLDER="output"
-	export CALIB_FOLDER=".calib.tmp"
-	
-	echo "TEST in " $DIR
-else
-	echo "RUN in " $DIR
-fi
 
 if [[ -f $DIR/$OUTFOLDER ]]; then
 	mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
@@ -33,8 +24,7 @@ done |
 		echo "processing {}"
 		export name=`basename {} | cut -d '.' -f 1`
 		export outfile=${DIR}/${OUTFOLDER}/${CALIB_FOLDER}/${name}".dim"
-		# Use default calibration
-		gpt.sh Calibration -Ssource={} -t ${outfile}'
+		${GPT} ${GRAPH_FOLDER}/${PREPROCESS} -Psource={} -Ptarget=${outfile}'
 )
 
 echo "Single Files The end"

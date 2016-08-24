@@ -2,6 +2,8 @@
 .*.
 *.xml
 logs/
+*.dat
+test/
 output/
 run.sh
 fetch.sh

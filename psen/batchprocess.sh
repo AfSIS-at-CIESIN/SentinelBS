@@ -2,19 +2,10 @@
 source config.sh
 
 # Batch cleaning via sentinenl 1 toolbox
+echo ""
 echo "Batch Processing Tool for Sentinel1 Data"
+echo "Part II: Merging images"
 echo "========================================"
-
-if [[ $TESTFLAG -eq 1 ]]; then
-	export DIR="."
-	export INFOLDER="infile"
-	export OUTFOLDER="output"
-	export CALIB_FOLDER=".calib.tmp"
-	
-	echo "TEST in " $DIR
-else
-	echo "RUN in " $DIR
-fi
 
 export FILELIST=""
 
@@ -28,8 +19,7 @@ echo "FILELIST"
 echo $FILELIST
 
 export MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic.dim"
-gpt.sh $GRAPH_FOLDER/$MOSAIC -Pfilelist=$FILELIST -t $DIR/$OUTFOLDER/$MOSAICNAME -q 16
+$GPT $GRAPH_FOLDER/$MOSAIC -PfileList=$FILELIST -Ptarget=$DIR/$OUTFOLDER/$MOSAICNAME -q 16
 
-rm -rf $DIR/OUTFOLDER/CALIB
 chmod 777 $DIR/$OUTFOLDER/$MOSAICNAME
 echo "Batch files The end"
