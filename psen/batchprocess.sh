@@ -19,7 +19,7 @@ echo "FILELIST"
 echo $FILELIST
 
 export MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic.dim"
-$GPT $GRAPH_FOLDER/$MOSAIC -PfileList=$FILELIST -Ptarget=$DIR/$OUTFOLDER/$MOSAICNAME -q 16
+$GPT $GRAPH_FOLDER/$MOSAIC -PfileList=$FILELIST -Ptarget=$DIR/$OUTFOLDER/$MOSAICNAME
 
 chmod 777 $DIR/$OUTFOLDER/$MOSAICNAME
 echo "Batch files The end"

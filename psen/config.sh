@@ -3,7 +3,7 @@
 export PATH=$PATH":/opt/snap/bin/"
 export GPT="gpt"
 
-export TESTFLAG=1
+export TESTFLAG=0
 
 export CALIB_FOLDER=".calib.tmp"
 
@@ -27,6 +27,6 @@ export MOSAIC="mosaic_SNAP.xml"
 
 # parallel by xargs for loop
 # max p allowed by server before crush
-export MAXP=4
+export MAXP=10
 export NP=$MAXP
 
