@@ -5,7 +5,8 @@ export GPT="gpt"
 
 export TESTFLAG=0
 
-export CALIB_FOLDER=".calib.tmp"
+export CALIB_FOLDER="calib.tmp"
+export MOSAIC_FOLDER="mosaic.tmp"
 
 if [[ $TESTFLAG -eq 1 ]]; then
 	export DIR="/home/mwang/sentinel/psen/test"

@@ -11,7 +11,14 @@ graph need revision to take input parameters
 
 ## TODO
 1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
-2. new snap tool is deployed, code may need revision on calling which tool, and new single file processing graph needs to be updated
+2. Mosaic incomplete:
+	a. may be memory issue -- use -x flag to see if better
+	b. parameter in xml file not specified -- check docs, no such thing
+	c. divide-conqure merge
+
+
+### 08.25
+1. new snap tool is deployed, code may need revision on calling which tool, and new single file processing graph updated
 
 ### 08.23
 1. aware that the External DEM parameter in preprocessing graph has a external file location, which is a customized one. So whenever you try the script on new server, be sure to get that settled

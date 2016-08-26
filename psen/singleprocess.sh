@@ -7,10 +7,6 @@ echo "Batch Processing Tool for Sentinel1 Data"
 echo "Part I: preprocessing"
 echo "========================================"
 
-if [[ -f $DIR/$OUTFOLDER ]]; then
-	mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
-fi
-
 mkdir -p $DIR/$OUTFOLDER
 mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
 
