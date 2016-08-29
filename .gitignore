@@ -7,4 +7,5 @@ test/
 output/
 run.sh
 fetch.sh
-
+*.err
+*.out

@@ -2,14 +2,32 @@
 # Batch cleaning via sentinenl 1 toolbox
 source config.sh
 
-export base=5
+export base=10
+
+mosaic(){
+  outname=$2/$RANDOM'.dim'
+  $GPT $GRAPH_FOLDER/$MOSAIC -PfileList=$1 -Ptarget=$outname
+}
+
+merge(){
+  children=''
+  for d in `find $1 -maxdepth 1 -type f`
+  do
+    child=$(basename $(find $d -maxdepth 1 -type f) | cut -d'.' -f 1)
+    children=$children','$child
+  done
+  children=`echo $children | cut -c 2-`
+
+  mosaic $children $1
+}
+
 
 divide(){
   n=`echo $1 | grep -o '.dim' | wc -l`
   if [[ n -le $base ]]; then
-    echo `merge $1`
+    mosaic $1 $2
   else
-    n=`expr $n / $base `
+    n=`expr $n / $base + 1`
 
     s0=`echo $1 | cut -d',' -f -$n`
     s1=`echo $1 | cut -d',' -f $((n+1))-$((n*2))`
@@ -22,51 +40,34 @@ divide(){
     s8=`echo $1 | cut -d',' -f $((n*8+1))-$((n*9))`
     s9=`echo $1 | cut -d',' -f $((n*9+1))-`
 
-    # parallel construction site
-    #array=($left $right)
-    #for e in ${array[*]}
-    #do
-    #  echo $e
-    #done |
-    #(
-    #  xargs -n 1 -P 2 -I {} sh -c 'merge ${}'
-    #)
+    # parallel
+    array=($s0 $s1 $s2 $s3 $s4 $s4 $s6 $s7 $s8 $s9)
+    for (( e=0; e<$base; e++ ))
+    do
+      mkdir -p $2/$e
+      echo ${array[$e]} $2/$e
+    done |
+    (
+      xargs -n 1 -P 2 -n 2 -I {} bash -c 'divide {}'
+    )
 
-    r0=`divide $s0`
-    r1=`divide $s1`
-    r2=`divide $s2`
-    r3=`divide $s3`
-    r4=`divide $s4`
-    r5=`divide $s5`
-    r6=`divide $s6`
-    r7=`divide $s7`
-    r8=`divide $s8`
-    r9=`divide $s9`
+    merge $2
 
-    res=$r0','$r1','$r2','$r3','$r4','$r5','$r6','$r7','$r8','$r9
-    echo `merge $res`
   fi
 }
 
-merge(){
-  outname=$RANDOM'.dim'
-  $GPT $GRAPH_FOLDER/$MOSAIC -PfileList=$1 -Ptarget=$DIR/$OUTFOLDER/$MOSAIC_FOLDER/$outname -x
-  echo $DIR/$OUTFOLDER/$MOSAIC_FOLDER/$outname
-}
-
+export -f divide
+export -f merge
+export -f mosaic
 
 echo ""
 echo "Batch Processing Tool for Sentinel1 Data"
 echo "Part II: Merging images"
 echo "========================================"
 
-mkdir -p $DIR/$OUTFOLDER
-mkdir -p $DIR/$OUTFOLDER/$CALIB_FOLDER
-mkdir -p $DIR/$OUTFOLDER/$MOSAIC_FOLDER
-
 export FILELIST=""
 
-for f in $DIR/$OUTFOLDER/$CALIB_FOLDER/*.dim
+for f in `dir $DIR/$OUTFOLDER/$CALIB_FOLDER/*.dim` 
 do
 	export FILELIST=${FILELIST}","$f
 done
@@ -76,13 +77,14 @@ echo "FILELIST"
 echo $FILELIST | cut -d',' -f 1
 echo $FILELIST | grep -o .dim | wc -l
 
-divide $FILELIST
+MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic"
+mkdir -p $DIR/$OUTFOLDER
+mkdir -p $DIR/$OUTFOLDER/$MOSAIC_FOLDER
+mkdir -p $DIR/$OUTFOLDER/$MOSAICNAME
 
-MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic.dim"
-RES=`divide $FILELIST`
+divide $FILELIST $DIR/$OUTFOLDER/$MOSAICNAME
+#mosaic $FILELIST $DIR/$OUTFOLDER/"mosaic_all_at_once.dim"
 
-cp $RES $DIR/$OUTFOLDER/$MOSAICNAME
-chmod 777 $DIR/$OUTFOLDER/$MOSAICNAME
+#chmod -R 777 $DIR/$OUTFOLDER/$MOSAICNAME
 
-echo "Final Mosaic is "$RES
 echo "Batch files The end"

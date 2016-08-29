@@ -2,14 +2,30 @@
 
 export base=5
 
+mosaic() {
+  #echo $1
+  n=`echo $1 | grep -o .dim | wc -l`
+  echo "" > $2/$n".out"
+}
+
+merge(){
+  #echo $RANDOM.'dim'
+  res=0
+  for d in `find $1 -maxdepth 1 -mindepth 1 -type d`
+  do
+    n=$(basename $(find $d -maxdepth 1 -type f) | cut -d'.' -f 1)
+    res=`expr $res + $n`
+  done
+
+  echo "" > $1/$res".out"
+}
+
 divide(){
   n=`echo $1 | grep -o '.dim' | wc -l`
   if [[ n -le $base ]]; then
-    echo `merge $1`
+    mosaic $1 $2
   else
-    n=`expr $n / $base `
-
-    export res=""
+    n=`expr $n / $base + 1`
 
     s0=`echo $1 | cut -d',' -f -$n`
     s1=`echo $1 | cut -d',' -f $((n+1))-$((n*2))`
@@ -20,42 +36,32 @@ divide(){
     # parallel construction site
     inparray=($s0 $s1 $s2 $s3 $s4)
     resarray=("" "" "" "" "")
-    for e in {0..5}
+    for (( e=0; e<$base; e++ ))
     do
-      echo $e
+      mkdir -p $2/$e
+      echo ${inparray[$e]} $2/$e
     done |
     (
-      xargs -P 2 -I{} bash -c '
-      echo ${inparray[{}]}
-      r=`divide {}`
-      export res=$res','$r'
+      xargs -P 2 -n 2 -I{} bash -c '
+      divide {}'
     )
-    #r1=`divide $s1`
-    #r2=`divide $s2`
-    #r3=`divide $s3`
-    #r4=`divide $s4`
-    #r5=`divide $s5`
 
-    res=`echo $res | cut -c 2-`
-    echo `merge $res`
+    merge $2
   fi
-}
-
-merge(){
-  #echo $RANDOM.'dim'
-  echo $1
 }
 
 export -f divide
 export -f merge
+export -f mosaic
 
-string=''
-for f in `dir /data2/sentinel1/analysis/calib.tmp/*.dim`
-do 
-  string=$string','$f
-done
-string=`echo $string | cut -c 2-`
+#string=''
+#for f in `dir /data2/sentinel1/analysis/calib.tmp/*.dim`
+#do 
+#  string=$string','$f
+#done
+#string=`echo $string | cut -c 2-`
+string='1.dim,2.dim'
 
-res=`divide $string`
+divide $string ./test
 echo $res
 echo `echo $res | grep -o .dim | wc -l`

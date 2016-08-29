@@ -13,9 +13,15 @@ graph need revision to take input parameters
 1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
 2. Mosaic incomplete:
 	a. may be memory issue -- use -x flag to see if better
-	b. parameter in xml file not specified -- check docs, no such thing
+	b. parameter in xml file not specified -- check docs, no such thing -- may be the width
 	c. divide-conqure merge
+	d. right now seems like the comb of a & b makes this problem
+	e. look into some java options during gpt, like the one you saw when refer "gpt mosaic width" on google
 
+
+### 08.29
+1. recursive merge folder based, rather than variable based, need to revise
+2. if recursive works but all-at-once not, problems is the combination of two, later work involves tunning merge frag for memory utilization
 
 ### 08.25
 1. new snap tool is deployed, code may need revision on calling which tool, and new single file processing graph updated
