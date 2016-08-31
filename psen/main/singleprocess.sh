@@ -1,5 +1,11 @@
 #!/bin/bash
-source config.sh
+
+export CONFIG=$1
+if [[ -z $CONFIG ]];then
+  echo "Using Default Config File"
+  export CONFIG=`dirname $0`'../config/config.sh'
+fi
+source $CONFIG
 
 # Batch cleaning via sentinenl 1 toolbox
 echo ""

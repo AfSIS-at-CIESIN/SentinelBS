@@ -1,6 +1,12 @@
 #!/bin/bash
 # Batch cleaning via sentinenl 1 toolbox
-source config.sh
+
+export CONFIG=$1
+if [[ -z $CONFIG ]];then
+  echo "Using Default Config File"
+  export CONFIG=`dirname $0`'/../config/config.sh'
+fi
+source $CONFIG
 
 export base=10
 
@@ -73,18 +79,18 @@ do
 done
 
 export FILELIST=`echo $FILELIST | cut -c 2-`
-echo "FILELIST"
-echo $FILELIST | cut -d',' -f 1
+echo "# FILES"
 echo $FILELIST | grep -o .dim | wc -l
 
-MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic"
+#MOSAICNAME=`date +"%Y%m%d%H%M"`"_Mosaic"
 mkdir -p $DIR/$OUTFOLDER
 mkdir -p $DIR/$OUTFOLDER/$MOSAIC_FOLDER
-mkdir -p $DIR/$OUTFOLDER/$MOSAICNAME
+#mkdir -p $DIR/$OUTFOLDER/$MOSAICNAME
 
-divide $FILELIST $DIR/$OUTFOLDER/$MOSAICNAME
-#mosaic $FILELIST $DIR/$OUTFOLDER/"mosaic_all_at_once.dim"
+#divide $FILELIST $DIR/$OUTFOLDER/$MOSAICNAME
+mosaic $FILELIST $DIR/$OUTFOLDER/$MOSAIC_FOLDER
 
-#chmod -R 777 $DIR/$OUTFOLDER/$MOSAICNAME
+chmod -R 777 $DIR/$OUTFOLDER/$MOSAIC_FOLDER
 
 echo "Batch files The end"
+

@@ -11,13 +11,15 @@ graph need revision to take input parameters
 
 ## TODO
 1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
-2. Mosaic incomplete:
-	a. may be memory issue -- use -x flag to see if better
-	b. parameter in xml file not specified -- check docs, no such thing -- may be the width
-	c. divide-conqure merge
-	d. right now seems like the comb of a & b makes this problem
-	e. look into some java options during gpt, like the one you saw when refer "gpt mosaic width" on google
+2. look into some java options during gpt, like the one you saw when refer "gpt mosaic width" on google
 
+
+### 08.30
+1. Mosaic incomplete:
+	a. may be memory issue -- use -x flag to see if better
+	b. parameter in xml file not specified -- check docs, no such thing -- may be the width -- YES that's the reason
+	c. divide-conqure merge -- problematic
+	d. right now seems like the comb of a & b makes this problem -- reason found
 
 ### 08.29
 1. recursive merge folder based, rather than variable based, need to revise

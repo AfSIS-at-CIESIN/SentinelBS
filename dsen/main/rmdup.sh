@@ -1,22 +1,16 @@
 #!/bin/bash
 
 export AD2DIR=$1
-export OUTDIR=$2
 
 if [[ -z $AD2DIR ]]; then
   export AD2DIR='/data2/sentinel1/ghana'
 fi
-if [[ -z $OUTDIR ]]; then
-  export OUTDIR=`dirname $0`'/../log/rmdup'
-fi
 
-export TMPFUL=$OUTDIR/.full.tmp
-export TMPPRF=$OUTDIR/.prefix.tmp
-export TMPUNQ=$OUTDIR/.unique.tmp
+export TMPFUL=$AD2DIR/.full.tmp
+export TMPPRF=$AD2DIR/.prefix.tmp
+export TMPUNQ=$AD2DIR/.unique.tmp
 
 echo "Start Remove Duplicate Products"
-
-mkdir -p $OUTDIR
 
 dir -1 $AD2DIR | sort > $TMPFUL 
 dir -1 $AD2DIR | cut -c -62 > $TMPPRF 
@@ -31,6 +25,6 @@ do
   fi
 done
 
-echo "Unique files: " `dir -1 $AD2DIR | wc -l`
+echo "Unique files: " `dir -1 $AD2DIR/*.zip | wc -l`
 echo "Rm End"
 

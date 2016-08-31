@@ -4,9 +4,28 @@
 0. analyze the bottleneck of current script:
 	1. which points make it really slow
 	2. will MR help
-1. clean repo structure for each tool
-2. reconstruct resuable script after prototyping success
 3. global garbage rm script
 4. deploy the system as MapReduce framework at AWS:
 	1. possibility of third-party software processing batch script via MR framework
 	2. efficiency & cost estimation
+
+
+## 160831
+1. now make repo structure very clear:
+	1. function main repo:
+		|
+		| - config/ for config files for main scripts to import for tasks
+		|
+		| - main/ for feature scripts
+		|
+		| - tasks/ for store task batches
+		|
+		| - test/ for testing & its outputs
+		|
+		| - log/ for potential log
+		|
+		| - tool(s)/ scripts left during development
+		|
+		| - run_tasks.sh script for batch processing (single-threaded task)
+
+2. add resuable param input features

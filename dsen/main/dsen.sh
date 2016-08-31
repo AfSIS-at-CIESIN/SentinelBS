@@ -3,6 +3,7 @@
 # Read in from commandline
 export CONFIG=$1
 if [[ -z $CONFIG ]]; then
+  echo "Using Default Config File"
   export CONFIG=`dirname $0`'/../config/config.sh'
 fi
 
