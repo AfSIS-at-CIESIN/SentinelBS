@@ -4,10 +4,8 @@ export PWD="Ciesin2016"
 # loc
 export GHANA="(-3.3368297113536087 4.394202020378941,1.4284107877773324 4.394202020378941,1.4284107877773324 11.110218557903721,-3.3368297113536087 11.110218557903721,-3.3368297113536087 4.394202020378941)"
 
-# basic
-export INTERACTIVE=""
-
-export OUTDIR="output"
+# basic default configuration
+export OUTDIR=`dirname $0`"/../output"
 
 # the hub allows no more than 2 downloads at same time
 export THREAD_NUMBER=2

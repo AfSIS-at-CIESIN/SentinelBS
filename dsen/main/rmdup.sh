@@ -1,7 +1,14 @@
 #!/bin/bash
 
-export AD2DIR='/data2/sentinel1/ghana'
-export OUTDIR='./test'
+export AD2DIR=$1
+export OUTDIR=$2
+
+if [[ -z $AD2DIR ]]; then
+  export AD2DIR='/data2/sentinel1/ghana'
+fi
+if [[ -z $OUTDIR ]]; then
+  export OUTDIR=`dirname $0`'/../log/rmdup'
+fi
 
 export TMPFUL=$OUTDIR/.full.tmp
 export TMPPRF=$OUTDIR/.prefix.tmp

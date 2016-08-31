@@ -9,7 +9,10 @@ Demand:
 	4. regular param as in 160726
 
 ## TODO
-1. See if there is way to make reusable script
+
+
+### 160831
+1. make reusable script -- encapsulate into units
 
 ### 16023
 1. Decided to use non-interactive mode where config file takes all

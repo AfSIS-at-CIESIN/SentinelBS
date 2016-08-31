@@ -1,6 +1,12 @@
 #!/bin/bash
 
-source config.sh
+# Read in from commandline
+export CONFIG=$1
+if [[ -z $CONFIG ]]; then
+  export CONFIG=`dirname $0`'/../config/config.sh'
+fi
+
+source $CONFIG
 
 echo "Dsen: Downloader for Sentinels Scientific Data Hub"
 
