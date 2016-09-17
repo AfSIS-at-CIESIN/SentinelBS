@@ -24,5 +24,3 @@ export DIREC=
 export THREAD_NUMBER=2
 # error
 export NETWORKERROR="ERROR 503: Service Unavailable."
-# debug flag
-export test=1

@@ -1,5 +1,7 @@
 export TESTD="tool/testrepo/"
-export OUTD="/hmt/sirius1/prv0/u/5/m/mw3065/sentinel/dsen/output/zip/"
+export OUTMAIN="/vega/afsis/users/mw3065/sentinel1/ghana/"
+export OUTSUB="/zip/"
+export SEASON=("2015s1" "2015s2" "2015s3" "2015s4")
 
 export YANNI="yzhan"
 export MENGQ="mwang"
@@ -10,10 +12,14 @@ export ONE="S1A_IW_GRDH_1SDV_20160323T175352_20160323T175417_010500_00F972_77E4.
 export ZIPDIR=$OUTD
 export USER=$MENGQ
 export ADDR="afsisdata2.ciesin.columbia.edu"
-export DEST="/data2/sentinel1/ghana"
+export DEST="/data2/sentinel1/ghana/"
 export CONT=$ALL
 cd $ZIPDIR
 
 # scp $CONT $USER@$ADDR:$DEST
-# rsync -av --ignore-existing $OUTD $USER@$ADDR:$DEST
-rsync -av $OUTD $USER@$ADDR:$DEST
+for s in ${SEASON[@]}
+do
+  echo $s
+  # rsync -av --ignore-existing $OUTD $USER@$ADDR:$DEST
+  rsync -av $OUTMAIN$s$OUTSUB $USER@$ADDR:$DEST$s
+done

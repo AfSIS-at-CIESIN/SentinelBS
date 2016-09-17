@@ -261,7 +261,4 @@ done
 cd ../
 
 echo 'the end'
-export OUTDIR="output"
-export ZIP="zip"
-cd $OUTDIR
 
