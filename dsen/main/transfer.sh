@@ -1,7 +1,7 @@
 export TESTD="tool/testrepo/"
 export OUTMAIN="/vega/afsis/users/mw3065/sentinel1/ghana/"
 export OUTSUB="/zip/"
-export SEASON=("2015s1" "2015s2" "2015s3" "2015s4")
+export SEASON=("2015s4")
 
 export YANNI="yzhan"
 export MENGQ="mwang"
