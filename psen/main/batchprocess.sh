@@ -73,7 +73,7 @@ echo "========================================"
 
 export FILELIST=""
 
-for f in `dir $DIR/$OUTFOLDER/$CALIB_FOLDER/*.dim` 
+for f in `dir $DIR/$OUTFOLDER/$CALIB_FOLDER/*.dim*` 
 do
 	export FILELIST=${FILELIST}","$f
 done

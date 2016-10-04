@@ -10,7 +10,16 @@ The Mosaic is customized from ./graph folder
 graph need revision to take input parameters
 
 ## TODO
-0. 3 images have sth wrong:
+1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
+2. look into some java options during gpt, like the one you saw when refer "gpt mosaic width" on google
+
+
+### 10.04
+1. revise batchprocessing -- bash is not that maintainable .........
+
+### 09.20
+1. normalization depreciated
+   3 images have sth wrong:
 	a. reproduce bug -- use SNAP & TOOLBOX respectively -- checked, preprocessing works well, and one single file yields correct result
 	b. preprocessing graph went wrong -- wrong, by experiment
 	c. one / some files yield incorrect result, making final result wrong
@@ -20,9 +29,6 @@ graph need revision to take input parameters
 	g. guess: snap problem, resampling problem, boundary problem(barely possible) -- all not correct
 	h. obs.: in all_at_once, some upper parts have >0 res.
 	i. guess: normalization problem
-1. Repo structure of dsen-ed file is changed. -- add a unversal preprocessing tools / config.sh so that all scripts can have a base on which to process the files
-2. look into some java options during gpt, like the one you saw when refer "gpt mosaic width" on google
-
 
 ### 08.30
 1. Mosaic incomplete:
