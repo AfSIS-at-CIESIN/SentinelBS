@@ -1,0 +1,3 @@
+#!/bin/bash
+dir=$HOME/sentinel/psen
+$dir/main/batchprocess.sh $dir/config/2016s1beam.sh
