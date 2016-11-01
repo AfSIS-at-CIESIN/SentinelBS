@@ -11,6 +11,11 @@ Demand:
 ## TODO
 
 
+### 161101
+1. query command changed -- max allow return number becomes 100 instead of unlimited -- need for loop ...
+2. key word 'high' depreciated'
+3. plz find a way to do python ...
+
 ### 160831
 1. make reusable script -- encapsulate into units
 
