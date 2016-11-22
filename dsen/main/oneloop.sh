@@ -76,6 +76,7 @@ if [[ ! -z $DIREC ]]; then
 fi
 
 export QUERY_STATEMENT="${DHUS_DEST}${QUERY}${LIMIT_QUERY}"
+echo $QUERY_STATEMENT
 
 export SLEEPTIME=300
 

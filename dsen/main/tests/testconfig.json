@@ -1,0 +1,14 @@
+{
+    "username": "",
+    "password": "",
+    "outputdirectory": "",
+
+    "platformname": "Sentinel-1",
+    "footprint": "(-3.3368297113536087 4.394202020378941,1.4284107877773324 4.394202020378941,1.4284107877773324 11.110218557903721,-3.3368297113536087 11.110218557903721,-3.3368297113536087 4.394202020378941)",
+    "startdate": "2016-01-01T00:00:00.000Z",
+    "enddate": "2016-03-31T23:59:59.999Z",
+    "producttype": "GRD",
+    "polarisationmode": "",
+    "sensoroperationalmode": "IW",
+    "orbitdirection": ""
+}
