@@ -10,3 +10,4 @@ fetch.sh
 *.err
 *.out
 *.pyc
+dsen/main/tests/*.zip

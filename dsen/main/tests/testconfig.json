@@ -1,7 +1,7 @@
 {
     "username": "",
     "password": "",
-    "outputdirectory": "",
+    "outputdirectory": "/Users/Emmanuel-PC/Documents/ciesin/dsen/main/tests/",
 
     "platformname": "Sentinel-1",
     "footprint": "(-3.3368297113536087 4.394202020378941,1.4284107877773324 4.394202020378941,1.4284107877773324 11.110218557903721,-3.3368297113536087 11.110218557903721,-3.3368297113536087 4.394202020378941)",
