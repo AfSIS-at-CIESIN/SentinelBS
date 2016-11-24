@@ -5,5 +5,5 @@ for f in tasks/*.sh
 do
   echo $f
   prefix=`basename $f`
-  bash $f 1> log/$prefix'.out' 2> log/$prefix'.err'
+  bash $f > log/$prefix'.log'
 done

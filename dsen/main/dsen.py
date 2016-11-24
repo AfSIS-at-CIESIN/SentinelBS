@@ -21,7 +21,7 @@ Workflow in this downloader:
 
 class Downloader(object):
     base_url = 'https://scihub.copernicus.eu/dhus/'
-    countries_geojson_filename = './countries.geo.json'
+    countries_geojson_filename = os.path.dirname(os.path.realpath(__file__)) + '/countries.geo.json'
 
     def __init__(self, configfilename):
         self.params, self.configs = self.params_wrapper(configfilename)
@@ -72,13 +72,13 @@ class Downloader(object):
                 elif k == 'endPosition':
                     params['endPosition'] = params['endPosition'].format(raw_params['startdate'], raw_params['enddate'])
                 elif k == 'footprint':
+                    if raw_params.get(k, None):
+                        print 'Err: footprint is suppose to be depreciated in dsen, please use country code'
+                        sys.exit(1)
                     # new feature, use geo.json file to parse coordinates
                     params['footprint'] = params['footprint'].format(self.extract_from_geojson(raw_params['countrycode']))
                 else:
                     # footprint int raw config is depreciated
-                    if k == 'footprint' and raw_params.get(k, None):
-                        print 'Err: footprint is suppose to be depreciated in dsen, please use country code'
-                        sys.exit(1)
                     params[k] = params[k].format(raw_params[k])
             except KeyError:
                 print 'KeyError', k, 'while parsing params'
@@ -128,14 +128,14 @@ class Downloader(object):
         # limit query making
         limit = ''
         if nrows:
-            limit += '&rows='+nrows
+            limit += '&rows='+str(nrows)
         if starts:
-            limit += '&start='+starts 
+            limit += '&start='+str(starts)
 
         # make main query
         for k, v in params.items():
             if v:
-                query += ' AND ' + k +':' + v
+                query += ' AND ' + str(k) +':' + str(v)
 
         return self.base_url + query + limit
 
@@ -147,13 +147,14 @@ class Downloader(object):
             response = requests.get(query_url, auth=(self.configs['username'], self.configs['password']), verify=False)
         return response
 
-    def downloader(self, name, url, md5_val, size):
+    def downloader(self, name, url):
         failed = True
         dir = self.configs["outputdirectory"] + name
+        md5_val = self.query_md5(url)
         # if already exists
         if os.path.isfile(dir):
             # if valid file
-            if not self.check_novalid(dir, md5_val, size):
+            if not self.check_novalid(dir, md5_val):
                 print name, "has already downloaded, skip"
                 return not failed
             else:
@@ -173,10 +174,10 @@ class Downloader(object):
             os.remove(dir)
             sys.exit(0)
 
-        failed = self.check_novalid(dir, md5_val, size)
+        failed = self.check_novalid(dir, md5_val)
         return failed
 
-    def check_novalid(self, path, md5_val, size):
+    def check_novalid(self, path, md5_val):
         """
         :check:
         : 1. size is good -- note! this is not possible, strange hmmm...
@@ -204,9 +205,8 @@ class Downloader(object):
         return md5.hexdigest().lower() == checksum.lower()
 
     def parse_response(self, response):
-        bs_resp = BeautifulSoup(response)
-        products = {x.title.string: {'url': x.link.get('href'), 'md5': self.query_md5(x.link.get('href')), 
-                                    'size': [y.string for y in x.find_all('str') if y['name'] == 'size'][0]} 
+        bs_resp = BeautifulSoup(response.text)
+        products = {x.title.string: {'url': x.link.get('href')} 
                     for x in bs_resp.find_all('entry')}
         return products
 
@@ -225,12 +225,11 @@ class Downloader(object):
 
         #print "Getting MD5 from", query_link
         response = self.send_request(query_link)
-        bs_resp = BeautifulSoup(response.text, 'xml')
-        md5_val = None
-        try:
-            md5_val = [x.string for x in bs_resp.find_all('Value') if x.string][0]
-        except IndexError as e:
+        md5_val = BeautifulSoup(BeautifulSoup(response.text).entry.get_text()).hash.string
+        if not md5_val:
             print "MD5 Retrieval Failed", d_link
+        else:
+            print "MD5 Retrieval Succeeded", d_link, md5_val
 
         return md5_val
 
@@ -241,7 +240,7 @@ class Downloader(object):
         # wait if website down, status_code 5XX
         response = self.send_request(query_url)
 
-        if response // 100 != 2:
+        if response.status_code // 100 != 2:
             raise
         
         # Download this batch
@@ -252,7 +251,7 @@ class Downloader(object):
         for name, attributes in products.items():
             failed = True
             while failed:
-                falied = self.downloader(name + suffix, attributes['url'], attributes['md5'], attributes['size'])
+                falied = self.downloader(name + suffix, attributes['url'])
                 time.sleep(1)
 
         return False

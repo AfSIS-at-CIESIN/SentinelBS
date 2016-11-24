@@ -2,6 +2,7 @@
 .*.
 *.xml
 logs/
+log/
 *.dat
 test/
 output/
