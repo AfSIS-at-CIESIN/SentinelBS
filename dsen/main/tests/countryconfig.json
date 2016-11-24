@@ -1,0 +1,14 @@
+{
+    "username": "",
+    "password": "",
+    "outputdirectory": "/Users/Emmanuel-PC/Documents/ciesin/dsen/main/tests/",
+
+    "platformname": "Sentinel-1",
+    "countrycode": "TZA",
+    "startdate": "2016-01-01T00:00:00.000Z",
+    "enddate": "2016-03-31T23:59:59.999Z",
+    "producttype": "GRD",
+    "polarisationmode": "",
+    "sensoroperationalmode": "IW",
+    "orbitdirection": ""
+}

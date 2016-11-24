@@ -1,5 +1,6 @@
 # a template configuration file
 # please copy to make new
+# countrycode is ISO country code, e.g. Tanzania := TZA
 
 {
     "username": "",
@@ -8,6 +9,7 @@
 
     "platformname": "",
     "footprint": "",
+    "countrycode": "",
     "startdate": "",
     "enddate": "",
     "producttype": "",

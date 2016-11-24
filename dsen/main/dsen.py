@@ -21,6 +21,7 @@ Workflow in this downloader:
 
 class Downloader(object):
     base_url = 'https://scihub.copernicus.eu/dhus/'
+    countries_geojson_filename = './countries.geo.json'
 
     def __init__(self, configfilename):
         self.params, self.configs = self.params_wrapper(configfilename)
@@ -31,7 +32,7 @@ class Downloader(object):
         if not dirpath:
             print dirpath, 'not valid, or not specified in config file'
             raise
-        if os.path.exists(dirpath):
+        if not os.path.exists(dirpath):
             os.makedirs(dirpath)
         return True
 
@@ -45,7 +46,7 @@ class Downloader(object):
         # return an empty parameter dictionary
         params = {
             'platformname': '{}',
-            'footprint': '"Intersects(POLYGON({}))"',
+            'footprint': '"Intersects(POLYGON(({})))"',
             'beginPosition': '[{} TO {}]',
             'endPosition': '[{} TO {}]',
             'producttype': '{}',
@@ -70,7 +71,14 @@ class Downloader(object):
                     params['beginPosition'] = params['beginPosition'].format(raw_params['startdate'], raw_params['enddate'])
                 elif k == 'endPosition':
                     params['endPosition'] = params['endPosition'].format(raw_params['startdate'], raw_params['enddate'])
+                elif k == 'footprint':
+                    # new feature, use geo.json file to parse coordinates
+                    params['footprint'] = params['footprint'].format(self.extract_from_geojson(raw_params['countrycode']))
                 else:
+                    # footprint int raw config is depreciated
+                    if k == 'footprint' and raw_params.get(k, None):
+                        print 'Err: footprint is suppose to be depreciated in dsen, please use country code'
+                        sys.exit(1)
                     params[k] = params[k].format(raw_params[k])
             except KeyError:
                 print 'KeyError', k, 'while parsing params'
@@ -86,6 +94,26 @@ class Downloader(object):
                 sys.exit(1)
 
         return params, configs
+
+    def extract_from_geojson(self, code):
+        # TODO 
+        countries_geojson = self.make_json(self.countries_geojson_filename)
+        formatted = None
+        try:
+            formatted = ','.join(['%.7f %.7f' % tuple(coord) for coord in 
+                                  [c['geometry']['coordinates'] for c in 
+                                    countries_geojson['features'] if c['id'] == code][0][0]
+                                 ])
+        except (KeyError, IndexError) as e:
+            print e, 'while extracting geojson, Please revise ...', code
+            # simple fussy suggestion, can use trie instead
+            print 'Maybe you are seeking...:'
+            possiblecountries = [ c['id'] for c in countries_geojson['features'] if c['id'].startswith(code[:1]) ]
+            for c in possiblecountries:
+                print c
+            print 'Exiting...'
+            sys.exit(1)
+        return formatted
 
     def make_json(self, configfilename):
         res_json = None
