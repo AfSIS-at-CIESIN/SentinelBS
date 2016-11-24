@@ -11,6 +11,10 @@ Demand:
 ## TODO
 
 
+### 161124
+1. dsen shell script depreciated
+2. dsen python prototype completed
+
 ### 161101
 1. query command changed -- max allow return number becomes 100 instead of unlimited -- need for loop ...
 2. key word 'high' depreciated'

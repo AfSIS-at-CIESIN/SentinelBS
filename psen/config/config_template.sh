@@ -14,19 +14,11 @@ export TESTFLAG=0
 export CALIB_FOLDER=
 export MOSAIC_FOLDER=
 
-if [[ $TESTFLAG -eq 1 ]]; then
-	export DIR=
-	export INFOLDER=
-	export OUTFOLDER=
-	
-	echo "TEST in " $DIR
-else
-	export DIR=
-	export INFOLDER=
-	export OUTFOLDER=
-	
-	echo "RUN in " $DIR
-fi
+export DIR=
+export INFOLDER=
+export OUTFOLDER=
+
+echo "RUN in " $DIR
 
 # user-defined graph location
 export GRAPH_FOLDER=

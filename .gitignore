@@ -11,3 +11,15 @@ fetch.sh
 *.out
 *.pyc
 dsen/main/tests/*.zip
+dsen/main/dist/*
+dsen/main/*egg-info*
+dsen/main/build/*
+config/
+tasks/
+!psen/tasks/task_template
+!psen/config/config_dev.sh
+!psen/config/config_template.sh
+!psen/config/example_config.sh
+!dsen/config/config.json
+!dsen/config/config_template.json
+!dsen/tasks/task_template
