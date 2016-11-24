@@ -24,6 +24,16 @@ class Downloader(object):
 
     def __init__(self, configfilename):
         self.params, self.configs = self.params_wrapper(configfilename)
+        # create repo if not exists
+        self._create_repo(self.configs.get('outputdirectory', None))
+
+    def _create_repo(self, dirpath):
+        if not dirpath:
+            print dirpath, 'not valid, or not specified in config file'
+            raise
+        if os.path.exists(dirpath):
+            os.makedirs(dirpath)
+        return True
 
     def params_wrapper(self, configfilename='../config/config.json'):
         """
@@ -55,15 +65,25 @@ class Downloader(object):
 
         # start end date shall be formatted separately
         for k in params.keys():
-            if k == 'beginPosition':
-                params['beginPosition'] = params['beginPosition'].format(raw_params['startdate'], raw_params['enddate'])
-            elif k == 'endPosition':
-                params['endPosition'] = params['endPosition'].format(raw_params['startdate'], raw_params['enddate'])
-            else:
-                params[k] = params[k].format(raw_params[k])
+            try:
+                if k == 'beginPosition':
+                    params['beginPosition'] = params['beginPosition'].format(raw_params['startdate'], raw_params['enddate'])
+                elif k == 'endPosition':
+                    params['endPosition'] = params['endPosition'].format(raw_params['startdate'], raw_params['enddate'])
+                else:
+                    params[k] = params[k].format(raw_params[k])
+            except KeyError:
+                print 'KeyError', k, 'while parsing params'
+                print 'Exiting...'
+                sys.exit(1)
 
         for k in configs.keys():
-            configs[k] = configs[k].format(raw_params[k])
+            try:
+                configs[k] = configs[k].format(raw_params[k])
+            except KeyError:
+                print 'KeyError', k, 'while parsing configs'
+                print 'Exiting...'
+                sys.exit(1)
 
         return params, configs
 
@@ -193,7 +213,6 @@ class Downloader(object):
         # wait if website down, status_code 5XX
         response = self.send_request(query_url)
 
-        # TODO: raise response exception
         if response // 100 != 2:
             raise
         
