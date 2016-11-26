@@ -148,7 +148,7 @@ class Downloader(object):
         return response
 
     def downloader(self, name, url):
-        failed = True
+        is_success = False
         dir = self.configs["outputdirectory"] + name
         md5_val = self.query_md5(url)
         # if already exists
@@ -156,7 +156,8 @@ class Downloader(object):
             # if valid file
             if not self.check_novalid(dir, md5_val):
                 print name, "has already downloaded, skip"
-                return not failed
+                is_success = True
+                return is_success
             else:
                 print name, " is corrupted, remove"
                 os.remove(dir)
@@ -174,17 +175,17 @@ class Downloader(object):
             os.remove(dir)
             sys.exit(0)
 
-        failed = self.check_novalid(dir, md5_val)
-        return failed
+        is_success = self.check_valid(dir, md5_val)
+        return is_success
 
-    def check_novalid(self, path, md5_val):
+    def check_valid(self, path, md5_val):
         """
         :check:
         : 1. size is good -- note! this is not possible, strange hmmm...
         : 2. md5 checksum is good
-        :return True if not valid, False else
+        :return True if valid, False else
         """
-        return not( os.path.exists(path) and zipfile.is_zipfile(path) and self.md5_compare(path, md5_val))
+        return os.path.exists(path) and zipfile.is_zipfile(path) and self.md5_compare(path, md5_val)
 
     def md5_compare(self, file_path, checksum, block_size=2 ** 13):
         """Compare a given md5 checksum with one calculated from a file"""
@@ -234,33 +235,42 @@ class Downloader(object):
         return md5_val
 
     def run_one_batch(self, starts, nrows):
+        '''
+        return True if no furtur batch, else False
+        '''
         suffix = '.zip'
         query_url = self.make_query(self.params, starts, nrows)
+        batch_end = False
 
         # wait if website down, status_code 5XX
         response = self.send_request(query_url)
 
         if response.status_code // 100 != 2:
+            print 'Response Error Code', response.status_code
+            print response.text
             raise
         
         # Download this batch
         products = self.parse_response(response)
         if not products:
-            return True
+            batch_end = True
+            return batch_end
 
         for name, attributes in products.items():
-            failed = True
-            while failed:
-                falied = self.downloader(name + suffix, attributes['url'])
+            is_success = True
+            while not is_success:
+                is_success = self.downloader(name + suffix, attributes['url'])
                 time.sleep(1)
 
-        return False
+        return batch_end
 
     def run_all(self):
         start = 0,
         nrows = 100
-        while self.run_one_batch(start, nrows):
+        print 'Starting...'
+        while not self.run_one_batch(start, nrows):
             start += nrows
+        print 'All batches completed, runs:', start // nrows
 
 
 def main(config):
