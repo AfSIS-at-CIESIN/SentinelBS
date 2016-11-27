@@ -155,7 +155,7 @@ class Downloader(object):
         # if already exists
         if os.path.isfile(dir):
             # if valid file
-            if not self.check_novalid(dir, md5_val):
+            if self.check_valid(dir, md5_val):
                 print name, "has already downloaded, skip"
                 is_success = True
                 return is_success
