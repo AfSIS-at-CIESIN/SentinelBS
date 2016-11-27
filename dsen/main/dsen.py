@@ -96,7 +96,6 @@ class Downloader(object):
         return params, configs
 
     def extract_from_geojson(self, code):
-        # TODO 
         countries_geojson = self.make_json(self.countries_geojson_filename)
         formatted = None
         try:
@@ -145,9 +144,11 @@ class Downloader(object):
             print "Datahub Service Down, Wait 5 min"
             time.sleep(300)
             response = requests.get(query_url, auth=(self.configs['username'], self.configs['password']), verify=False)
+        time.sleep(1)
         return response
 
     def downloader(self, name, url):
+        print 'Start processing', name, url
         is_success = False
         dir = self.configs["outputdirectory"] + name
         md5_val = self.query_md5(url)
@@ -192,14 +193,11 @@ class Downloader(object):
         md5 = hashlib.md5()
         try:
             with open(file_path, "rb") as f:
-                #progress = tqdm(desc="MD5 checksumming", total=os.path.getsize(file_path), unit="B", unit_scale=True)
                 while True:
                     block_data = f.read(block_size)
                     if not block_data:
                         break
                     md5.update(block_data)
-                    #progress.update(len(block_data))
-                #progress.close()
         except (IOError, TypeError) as e:
             print file_path, "is not valid filepath for md5_compare"
 
@@ -209,6 +207,8 @@ class Downloader(object):
         bs_resp = BeautifulSoup(response.text)
         products = {x.title.string: {'url': x.link.get('href')} 
                     for x in bs_resp.find_all('entry')}
+        for k, v in products.items():
+            print k, v.get('url', 'No URL parsed')
         return products
 
     def query_md5(self, d_link):
@@ -238,6 +238,7 @@ class Downloader(object):
         '''
         return True if no furtur batch, else False
         '''
+        print 'Start 1 batch', starts, 'nrows', nrows
         suffix = '.zip'
         query_url = self.make_query(self.params, starts, nrows)
         batch_end = False
@@ -254,10 +255,11 @@ class Downloader(object):
         products = self.parse_response(response)
         if not products:
             batch_end = True
+            print 'No product parsed, batch end'
             return batch_end
 
         for name, attributes in products.items():
-            is_success = True
+            is_success = False
             while not is_success:
                 is_success = self.downloader(name + suffix, attributes['url'])
                 time.sleep(1)
@@ -265,12 +267,12 @@ class Downloader(object):
         return batch_end
 
     def run_all(self):
-        start = 0,
+        start = 0
         nrows = 100
-        print 'Starting...'
+        print 'Starting all...'
         while not self.run_one_batch(start, nrows):
             start += nrows
-        print 'All batches completed, runs:', start // nrows
+        print 'All batches completed, runs:', start / nrows
 
 
 def main(config):
