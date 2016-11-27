@@ -177,6 +177,10 @@ class Downloader(object):
             sys.exit(0)
 
         is_success = self.check_valid(dir, md5_val)
+        if is_success:
+            print 'Checked', name, 'is good'
+        else:
+            print 'Checked', name, 'not good'
         return is_success
 
     def check_valid(self, path, md5_val):
