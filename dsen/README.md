@@ -3,7 +3,13 @@
 ## Introduction
 
 Datahub has RESTful API which allows querying & downloading related sentinel data from its website. dsen encapsulated this feature, as well as some others,
-to ensure a fault-tolerant multithreading download procedure.
+to ensure a fault-tolerant multithreading download procedure.  
+Current version is Python-based.
+
+
+## Before You Start
+
+Please go into main/ repo, run setup.sh as `./setup.sh`, this will install necessary packages on current user's repo.
 
 ## Usage
 
@@ -22,18 +28,20 @@ task files should be under folder /tasks, with postfix .sh. After task is settle
 	|
 	|--	main/
 	|	|
-	|	|--	dsen.sh: serves as the downloader with multithread downloading on HPC, 
+	|	|--	dsen.py: serves as the downloader, 
 	|	|
 	|	|--	rmdep.sh: removes duplicate files if any have been downloaded
 	|	|
 	|	|--	transfer.sh: moves file from HPC to our server, for further processing.
+	|	|
+    |	|--	setup.sh: setup dependency packages before starts.
 	|
 	|
 	|--	config/ 	folder for storage of configuration files
 	|	|
-	|	|-- 	config_template.sh: parameter specificied for using downloading scripts, plz copy & paste it to a new one and edit this new one for customized param
+	|	|-- 	config_template.json: parameter specificied for using downloading scripts, plz copy & paste it to a new one and edit this new one for customized param
 	|	|
-	|	|-- 	config.sh: default configuration file if none is specified by users
+	|	|-- 	config.json: default configuration file if none is specified by users
 	|
 	|
 	|--	tasks/ 		folder for storage of scripts calling customized configuration to run main/dsen.sh (only *.sh files will be executed by run_tasks)
